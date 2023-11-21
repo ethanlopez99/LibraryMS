@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from api import crud, security, models
 from .database import SessionLocal
 from .models import Admin, AdminCreate, Token
-from .security import login
 
 router = APIRouter(prefix="/admins")
 
@@ -23,7 +22,7 @@ def get_all_admins(db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 def validate_credentials(admin_data: AdminCreate, db: Session = Depends(get_db)):
-    return (login(db, admin_data))
+    return (security.login(db, admin_data))
 
 # takes requests in the form of {"username": "my_username", "password":"my_password"}
 @router.post("/register")

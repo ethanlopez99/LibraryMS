@@ -1,7 +1,9 @@
 from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from pydantic import BaseModel
 from .database import Base
+
+from datetime import datetime
 
 
 # Admin object created as a table in database. Used by staff, not lenders.
@@ -51,3 +53,16 @@ class LenderCreate(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+    id = Column(Integer, primary_key=True, index=True)
+    book_id = Column(Integer, ForeignKey("books.id"))
+    lender_id = Column(Integer, ForeignKey("lenders.id"))
+    transaction_type = Column(Integer) # 1 for lend, 0 for return
+    transaction_timestamp = Column(DateTime, default=datetime.utcnow)
+
+class TransactionCreate(BaseModel):
+    book_id: int
+    lender_id: int
+    transaction_type: int # 1 for lend, 0 for return
