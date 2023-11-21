@@ -1,13 +1,14 @@
 from fastapi import FastAPI
 
 import databases
-from api import models, admins, transactions
+from api import models, admins, transactions, books
 from api.database import Base, engine
 
 app = FastAPI()
 
 app.include_router(admins.router)
 app.include_router(transactions.router)
+app.include_router(books.router)
 
 
 # Create tables
