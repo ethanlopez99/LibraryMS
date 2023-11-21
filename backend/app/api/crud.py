@@ -33,12 +33,30 @@ def hash_password(password:str):
     return pw_context.hash(password)
 
 def new_transaction(db: Session, transaction_data: TransactionCreate):
-    db_transaction = Transaction(book_id=transaction_data['book_id'], lender_id=transaction_data['lender_id'], transaction_type=transaction_data['transaction_type'])
+    db_transaction = Transaction(book_id=transaction_data['book_id'], lender_id=transaction_data['lender_id'], transaction_type=transaction_data['transaction_type'])    
     db.add(db_transaction)
     db.commit()
+
+    # Update book row to change status
+    db.query(Book).filter(Book.id == transaction_data['book_id']).update({'is_available': (False if db_transaction.transaction_type == 1 else True), 'lender_id': db_transaction.lender_id})
     db.refresh(db_transaction)
     return db_transaction
 
 # Added pagination functionality
 def get_transactions(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Transaction).offset(skip).limit(limit).all()
+
+
+
+def get_all_books(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(Book).offset(skip).limit(limit).all()
+
+def search_books_by_name(db: Session, book_name: str, skip: int = 0, limit: int = 10):
+    return db.query(Book).filter(Book.title.ilike(f"%{book_name}")).offset(skip).limit(limit).all()
+
+def new_book(db: Session, book_data: BookCreate):
+    new_book_data = Book(title=book_data['title'], author=book_data['author'])
+    db.add(new_book_data)
+    db.commit()
+    db.refresh(new_book_data)
+    return new_book_data
