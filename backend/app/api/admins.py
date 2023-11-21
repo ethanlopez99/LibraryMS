@@ -1,19 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from api import crud, security, models
-from .database import SessionLocal
+from .database import get_db
 from .models import Admin, AdminCreate, Token
 
 router = APIRouter(prefix="/admins")
-
-# Used to create new sessions of database for each request, to manage lifecycle of db session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @router.get("/")
 def get_all_admins(db: Session = Depends(get_db)):
