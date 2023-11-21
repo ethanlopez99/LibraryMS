@@ -18,7 +18,6 @@ def validate_credentials(admin_data: AdminCreate, db: Session = Depends(get_db))
 # takes requests in the form of {"username": "my_username", "password":"my_password"}
 @router.post("/register")
 def register_admin(admin_data: AdminCreate, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
-    print(token)
     if "sub" not in token:
         raise HTTPException(status_code=401, detail="Not Authorized")
 
