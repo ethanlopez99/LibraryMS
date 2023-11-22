@@ -1,0 +1,58 @@
+.app_login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+
+  background-size: cover;
+}
+
+.app_login-form_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 70vh;
+  width: 70vw;
+
+  background-color: white;
+  border-radius: 1%;
+}
+
+.app_login-form_container h1 {
+  font-size: 60px;
+
+  text-decoration: underline;
+}
+
+.app_login-form_field_container {
+  display: flex;
+  flex-direction: column;
+
+  margin: 4rem 0rem;
+}
+
+.app_login-form_input_field {
+  border: none;
+  border-bottom: 2px solid gray;
+  outline: 0;
+  font-size: 1.3rem;
+  padding: 7px;
+  background: transparent;
+}
+
+.app_login-form_submit {
+  width: 100%;
+  padding: 1rem;
+
+  font-size: 28px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: white;
+
+  background-color: chocolate;
+  border: none;
+  cursor: pointer;
+}

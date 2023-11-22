@@ -5,13 +5,15 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 
+import login_background from "../../assets/images/login_background.jpg";
+
 const validationSchema = Yup.object().shape({
   username: Yup.string().required("Required").label("Username"),
   password: Yup.string().required("Required").label("Password"),
 });
 
 const LoginScreen = ({ setUserToken }) => {
-  const handleLogin = async ({ username, password, setFieldError }) => {
+  const handleLogin = async ({ username, password }) => {
     const userAttempt = {
       username: username,
       password: password,
@@ -33,37 +35,40 @@ const LoginScreen = ({ setUserToken }) => {
   };
 
   return (
-    <div className="app_login">
-      <Formik
-        initialValues={{ username: "", password: "" }}
-        onSubmit={handleLogin}
-        validationSchema={validationSchema}
-      >
-        <Form>
-          <div>
-            <label htmlFor="username">Username</label>
-            <Field
-              type="text"
-              id="username"
-              name="username"
-              placeholder="Username"
-            />
-          </div>
-          <div>
-            <label htmlFor="password">Password</label>
-            <Field
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Password"
-            />
-            <ErrorMessage name="password" component="div" />
-          </div>
-          <div>
-            <button type="submit">Login</button>
-          </div>
-        </Form>
-      </Formik>
+    <div
+      className="app_login"
+      style={{ backgroundImage: `url(${login_background})` }}
+    >
+      <div className="app_login-form_container">
+        <h1>Log In</h1>
+        <Formik
+          initialValues={{ username: "", password: "" }}
+          onSubmit={handleLogin}
+          validationSchema={validationSchema}
+        >
+          <Form>
+            <div className="app_login-form_field_container">
+              <Field
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Username"
+                className="app_login-form_input_field"
+              />
+            </div>
+            <div className="app_login-form_field_container">
+              <Field
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Password"
+                className="app_login-form_input_field"
+              />
+            </div>
+            <button type="submit" className="app_login-form_submit">Login</button>
+          </Form>
+        </Formik>
+      </div>
     </div>
   );
 };
