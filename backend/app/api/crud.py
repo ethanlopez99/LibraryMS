@@ -37,6 +37,11 @@ def hash_password(password:str):
 
 def new_transaction(db: Session, transaction_data: TransactionCreate):
     db_transaction = Transaction(book_id=transaction_data['book_id'], lender_id=transaction_data['lender_id'], transaction_type=transaction_data['transaction_type'])    
+    if (not is_book_available(db, db_transaction.book_id) and db_transaction.transaction_type == 1):
+        return None # Cannot loan a book if not available
+    elif (is_book_available(db, db_transaction.book_id) and db_transaction.transaction_type == 0):
+        return None # Cannot return a book if it has not been loaned
+    
     db.add(db_transaction)
     db.commit()
 
@@ -45,6 +50,7 @@ def new_transaction(db: Session, transaction_data: TransactionCreate):
     db.commit()
     db.refresh(db_transaction)
     return db_transaction
+
 
 # Added pagination functionality
 def get_transactions(db: Session, skip: int = 0, limit: int = 10):
@@ -64,6 +70,10 @@ def new_book(db: Session, book_data: BookCreate):
     db.commit()
     db.refresh(new_book_data)
     return new_book_data
+
+def is_book_available(db: Session, book_id: str):
+    return db.query(Book.is_available).filter(Book.id == book_id)
+
 
 # ===== LENDERS CRUD FUNCTIONS ===== #
 
