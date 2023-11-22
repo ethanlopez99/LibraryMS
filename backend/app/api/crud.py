@@ -3,6 +3,7 @@ from .models import Admin, AdminCreate, Book, BookCreate, Lender, LenderCreate, 
 
 from passlib.context import CryptContext
 
+# ===== ADMIN CRUD FUNCTIONS ===== #
 
 def create_admin(db: Session, admin_data: AdminCreate):
     db_admin = Admin(username=admin_data['username'], password=hash_password(admin_data['password']))
@@ -32,6 +33,8 @@ pw_context = CryptContext(schemes=["bcrypt"])
 def hash_password(password:str):
     return pw_context.hash(password)
 
+# ===== TRANSACTION CRUD FUNCTIONS ===== #
+
 def new_transaction(db: Session, transaction_data: TransactionCreate):
     db_transaction = Transaction(book_id=transaction_data['book_id'], lender_id=transaction_data['lender_id'], transaction_type=transaction_data['transaction_type'])    
     db.add(db_transaction)
@@ -39,6 +42,7 @@ def new_transaction(db: Session, transaction_data: TransactionCreate):
 
     # Update book row to change status
     db.query(Book).filter(Book.id == transaction_data['book_id']).update({'is_available': (False if db_transaction.transaction_type == 1 else True), 'lender_id': db_transaction.lender_id})
+    db.commit()
     db.refresh(db_transaction)
     return db_transaction
 
@@ -46,7 +50,7 @@ def new_transaction(db: Session, transaction_data: TransactionCreate):
 def get_transactions(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Transaction).offset(skip).limit(limit).all()
 
-
+# ===== BOOKS CRUD FUNCTIONS ===== #
 
 def get_all_books(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Book).offset(skip).limit(limit).all()
@@ -60,3 +64,18 @@ def new_book(db: Session, book_data: BookCreate):
     db.commit()
     db.refresh(new_book_data)
     return new_book_data
+
+# ===== LENDERS CRUD FUNCTIONS ===== #
+
+def get_all_lenders(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(Lender).offset(skip).limit(limit).all()
+
+def search_lender_by_name(db: Session, lender_name: str, skip: int = 0, limit: int = 10):
+    return db.query(Lender).filter(Lender.name.ilike(f"%{lender_name}")).offset(skip).limit(limit).all()
+
+def new_lender(db: Session, lender_data: Lender):
+    new_lender_data = Lender(lender_name=lender_data['lender_name'])
+    db.add(new_lender_data)
+    db.commit()
+    db.refresh(new_lender_data)
+    return new_lender_data
