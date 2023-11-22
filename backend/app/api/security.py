@@ -19,7 +19,11 @@ def login(db: Session, admin_data: AdminCreate):
     if admin and pw_context.verify(admin_data.password, admin.password):
         return {"access_token": create_jwt_token(data={"sub": admin.username}), "token_type": "bearer"}
     else:
-        return None
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
 def create_jwt_token(data: dict):
     return jwt.encode(data, "secret_token", algorithm="HS256")
