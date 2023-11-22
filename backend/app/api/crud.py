@@ -22,7 +22,10 @@ def updateAdmin(db: Session, admin_id: int, update_data: dict):
     db_admin = get_admin(db, admin_id)
     if db_admin:
         for key, value in update_data.items():
-            setattr(db_admin, key, value)
+            if key == 'password':
+                setattr(db_admin, key, hash_password(value))
+            else:
+                setattr(db_admin, key, value)
         db.commit()
         db.refresh(db_admin)
         return db_admin
@@ -74,6 +77,15 @@ def new_book(db: Session, book_data: BookCreate):
 def is_book_available(db: Session, book_id: str):
     return db.query(Book.is_available).filter(Book.id == book_id)
 
+def update_book(db: Session, book_id: int, update_data: dict):
+    db_book = db.query(Book).filter(Book.id == book_id).first()
+    if db_book:
+        for key, value in update_data.items():
+            setattr(db_book, key, value)
+        db.commit()
+        db.refresh(db_book)
+        return db_book
+    return None
 
 # ===== LENDERS CRUD FUNCTIONS ===== #
 
@@ -89,3 +101,13 @@ def new_lender(db: Session, lender_data: Lender):
     db.commit()
     db.refresh(new_lender_data)
     return new_lender_data
+
+def update_lender(db: Session, lender_id: int, update_data: dict):
+    db_lender = db.query(Lender).filter(Lender.id == lender_id).first()
+    if db_lender:
+        for key, value in update_data.items():
+            setattr(db_lender, key, value)
+        db.commit()
+        db.refresh(db_lender)
+        return db_lender
+    return None

@@ -11,7 +11,7 @@ def get_all_lenders(db: Session = Depends(get_db), skip: int = 0, limit: int = 1
     if "sub" not in token:
         raise HTTPException(status_code=401, detail="Not Authorized")
     lenders = crud.get_all_lenders(db=db, skip=skip, limit=limit)
-    return books
+    return lenders
 
 @router.get("/search")
 def search_by_name(name: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
@@ -28,3 +28,14 @@ def create_new_lender(lender_data: LenderCreate, db: Session = Depends(get_db), 
         return lender
     else:
         raise  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to add new lender")
+
+@router.post("/update")
+def update_lender(lender_id: int, new_lender_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
+    if "sub" not in token:
+        raise HTTPException(status_code=401, detail="Not Authorized")
+    db_lender = crud.update_lender(lender_id=lender_id, update_data=new_lender_data, db=db)
+    if db_lender:
+        return db_lender
+    else:
+        raise  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update lender")
+        

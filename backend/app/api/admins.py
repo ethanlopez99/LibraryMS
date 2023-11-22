@@ -27,3 +27,14 @@ def register_admin(admin_data: AdminCreate, db: Session = Depends(get_db), token
         return admin
     else:
         raise  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to create admin")
+    
+@router.post("/update")
+def update_admin(admin_id: int, new_admin_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
+    if "sub" not in token:
+        raise HTTPException(status_code=401, detail="Not Authorized")
+    db_admin = crud.update_admin(admin_id=admin_id, update_data=new_admin_data, db=db)
+    if db_admin:
+        return db_admin
+    else:
+        raise  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update admin")
+        
