@@ -1,0 +1,46 @@
+.app_home {
+  display: flex;
+  flex-direction: column;
+}
+
+.app_home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.app_home-header img {
+  height: 100px;
+  align-self: flex-start;
+  margin-left: 5rem;
+}
+
+.app_home-header button {
+  height: min-content;
+  padding: 1rem 2rem;
+  margin-right: 10rem;
+
+  font-size: 20px;
+  text-transform: uppercase;
+  font-weight: bold;
+
+  background-color: salmon;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.app_home-header button:hover {
+  color: gainsboro;
+}
+
+.app_home-dashboard_container {
+  display: flex;
+  flex-direction: row;
+
+  flex-wrap: wrap;
+  width: 100vw;
+}
