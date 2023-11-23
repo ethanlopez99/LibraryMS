@@ -13,7 +13,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const LoginScreen = ({ setUserToken }) => {
-  const handleLogin = async ({ username, password }) => {
+  const handleLogin = async ({ username, password, resetForm }) => {
     const userAttempt = {
       username: username,
       password: password,
@@ -32,6 +32,7 @@ const LoginScreen = ({ setUserToken }) => {
       }
       console.error(error.message);
     }
+    resetForm();
   };
 
   return (
@@ -65,7 +66,9 @@ const LoginScreen = ({ setUserToken }) => {
                 className="app_login-form_input_field"
               />
             </div>
-            <button type="submit" className="app_login-form_submit">Login</button>
+            <button type="submit" className="app_login-form_submit">
+              Login
+            </button>
           </Form>
         </Formik>
       </div>
