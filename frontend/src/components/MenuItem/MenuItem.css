@@ -1,0 +1,18 @@
+.menu_item_container {
+  display: flex;
+  width: max-content;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  padding: 1rem 5rem;
+
+  border: 1px solid grey;
+  border-radius: 10px;
+}
+
+.menu_item_container p {
+  font-size: 32px;
+  margin: 0 0 1rem 0;
+}
