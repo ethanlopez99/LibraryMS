@@ -10,9 +10,19 @@
 
   border: 1px solid grey;
   border-radius: 10px;
+
+  max-width: min-content;
+
+  margin: 1rem 2rem;
+  cursor: pointer;
+}
+
+.menu_item_container:hover {
+  background-color: lightcyan;
 }
 
 .menu_item_container p {
-  font-size: 32px;
+  font-size: 20px;
   margin: 0 0 1rem 0;
+  text-align: center;
 }
