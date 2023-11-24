@@ -7,6 +7,7 @@ import "./HomeScreen.css";
 import { PiBooksFill, PiArrowCircleUpBold } from "react-icons/pi";
 import { FaUserFriends, FaUserShield, FaChartBar } from "react-icons/fa";
 import LoanBookModal from "../../components/Modals/LoanBookModal/LoanBookModal";
+import ReturnBookModal from "../../components/Modals/ReturnBookModal/ReturnBookModal";
 
 const menuItems = [
   { Icon: PiBooksFill, title: "Books", value: 10, color: "green" },
@@ -29,14 +30,10 @@ const menuItems = [
 const HomeScreen = ({ userToken, setUserToken }) => {
   // Creating states for modal pages
   const [loanBookModalShow, setLoanBookModalShow] = useState(false);
+  const [returnBookModalShow, setReturnBookModalShow] = useState(false);
 
   const handleLogout = () => {
     setUserToken(null);
-  };
-  const loanBookModal = () => {};
-
-  const handleModal = () => {
-    console.log("test");
   };
 
   return (
@@ -57,7 +54,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
           </button>
           <button
             className="navbar_button"
-            onClick={() => console.log("Clicked")}
+            onClick={() => setReturnBookModalShow(true)}
           >
             Return Book
           </button>
@@ -71,7 +68,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
             title={item.title}
             value={item.value}
             color={item.color}
-            openModal={handleModal}
+            openModal={() => console.log(item.title)}
             key={`${item.title}_item`}
           />
         ))}
@@ -80,6 +77,12 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <LoanBookModal
           userToken={userToken}
           setLoanBookModalShow={setLoanBookModalShow}
+        />
+      )}
+      {returnBookModalShow && (
+        <ReturnBookModal
+          userToken={userToken}
+          setReturnBookModalShow={setReturnBookModalShow}
         />
       )}
     </div>
