@@ -1,6 +1,8 @@
 .app_home {
   display: flex;
   flex-direction: column;
+
+  height: 100vh;
 }
 
 .app_home-header {
