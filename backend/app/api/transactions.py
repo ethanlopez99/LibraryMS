@@ -17,7 +17,7 @@ def new_transaction(transaction: TransactionCreate, db: Session = Depends(get_db
     if (new_transaction_data):
         return new_transaction_data
     
-    raise HTTPException(status_code=422, detail="Book is already loaned out")
+    raise HTTPException(status_code=422, detail="Request could not be completed, please ensure you're selecting the correct book and correct lender")
 
 @router.get("/")
 def get_transactions(skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
