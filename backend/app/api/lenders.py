@@ -14,10 +14,10 @@ def get_all_lenders(db: Session = Depends(get_db), skip: int = 0, limit: int = 1
     return lenders
 
 @router.get("/search")
-def search_by_name(name: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
+def search_by_name(lender_name: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
         raise HTTPException(status_code=401, detail="Not Authorized")
-    lenders = crud.search_lender_by_name(db, name, skip=skip, limit=limit)
+    lenders = crud.search_lender_by_name(db, lender_name, skip=skip, limit=limit)
     return lenders
 
 @router.post("/new")

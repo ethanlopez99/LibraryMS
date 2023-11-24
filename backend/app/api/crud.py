@@ -39,12 +39,15 @@ def hash_password(password:str):
 # ===== TRANSACTION CRUD FUNCTIONS ===== #
 
 def new_transaction(db: Session, transaction_data: TransactionCreate):
-    db_transaction = Transaction(book_id=transaction_data['book_id'], lender_id=transaction_data['lender_id'], transaction_type=transaction_data['transaction_type'])    
-    if (not is_book_available(db, db_transaction.book_id) and db_transaction.transaction_type == 1):
+    db_transaction = Transaction(book_id=transaction_data['book_id'], lender_id=transaction_data['lender_id'], transaction_type=transaction_data['transaction_type'])
+
+    available = is_book_available(db, db_transaction.book_id)
+    if (available == False and db_transaction.transaction_type == 1):
         return None # Cannot loan a book if not available
-    elif (is_book_available(db, db_transaction.book_id) and db_transaction.transaction_type == 0):
+    elif (available and db_transaction.transaction_type == 0):
         return None # Cannot return a book if it has not been loaned
     
+
     db.add(db_transaction)
     db.commit()
 
@@ -65,7 +68,7 @@ def get_all_books(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Book).offset(skip).limit(limit).all()
 
 def search_books_by_name(db: Session, book_name: str, skip: int = 0, limit: int = 10):
-    return db.query(Book).filter(Book.title.ilike(f"%{book_name}")).offset(skip).limit(limit).all()
+    return db.query(Book).filter(Book.title.ilike(book_name)).offset(skip).limit(limit).all()
 
 def new_book(db: Session, book_data: BookCreate):
     new_book_data = Book(title=book_data['title'], author=book_data['author'])
@@ -74,8 +77,9 @@ def new_book(db: Session, book_data: BookCreate):
     db.refresh(new_book_data)
     return new_book_data
 
-def is_book_available(db: Session, book_id: str):
-    return db.query(Book.is_available).filter(Book.id == book_id)
+def is_book_available(db: Session, book_id: int):
+    result = db.query(Book.is_available).filter(Book.id == book_id).all()
+    return result[0].is_available if result else None
 
 def update_book(db: Session, book_id: int, update_data: dict):
     db_book = db.query(Book).filter(Book.id == book_id).first()
@@ -93,7 +97,7 @@ def get_all_lenders(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Lender).offset(skip).limit(limit).all()
 
 def search_lender_by_name(db: Session, lender_name: str, skip: int = 0, limit: int = 10):
-    return db.query(Lender).filter(Lender.name.ilike(f"%{lender_name}")).offset(skip).limit(limit).all()
+    return db.query(Lender).filter(Lender.lender_name.ilike(lender_name)).offset(skip).limit(limit).all()
 
 def new_lender(db: Session, lender_data: Lender):
     new_lender_data = Lender(lender_name=lender_data['lender_name'])
