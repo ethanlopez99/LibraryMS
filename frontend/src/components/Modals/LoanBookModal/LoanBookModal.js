@@ -3,7 +3,7 @@ import Async from "react-select/async";
 import axios from "axios";
 
 import "./LoanBookModal.css";
-import DropdownOption from "./DropdownOption/DropdownOption";
+import DropdownOption from "../../DropdownOption/DropdownOption";
 
 import { IoCloseOutline } from "react-icons/io5";
 
