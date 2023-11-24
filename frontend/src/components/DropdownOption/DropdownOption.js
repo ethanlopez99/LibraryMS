@@ -7,6 +7,7 @@ const DropdownOption = ({ label, value }) => {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
+        height: "50px",
       }}
     >
       <p>{label}</p>
