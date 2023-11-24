@@ -44,15 +44,20 @@ def new_transaction(db: Session, transaction_data: TransactionCreate):
     available = is_book_available(db, db_transaction.book_id)
     if (available == False and db_transaction.transaction_type == 1):
         return None # Cannot loan a book if not available
-    elif (available and db_transaction.transaction_type == 0):
+    elif (available == True and db_transaction.transaction_type == 0):
         return None # Cannot return a book if it has not been loaned
     
+    book = db.query(Book).filter(Book.id == transaction_data['book_id'])
+    book_lender_id = db.query(Book.lender_id).filter(Book.id == transaction_data['book_id']).all()[0].lender_id
 
+    if (db_transaction.transaction_type == 0 and not book_lender_id == db_transaction.lender_id):
+        return None # Lender ID must match to be able to return book
+    
     db.add(db_transaction)
     db.commit()
 
     # Update book row to change status
-    db.query(Book).filter(Book.id == transaction_data['book_id']).update({'is_available': (False if db_transaction.transaction_type == 1 else True), 'lender_id': db_transaction.lender_id})
+    book.update({'is_available': (False if db_transaction.transaction_type == 1 else True), 'lender_id': db_transaction.lender_id})
     db.commit()
     db.refresh(db_transaction)
     return db_transaction
