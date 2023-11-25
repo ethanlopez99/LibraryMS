@@ -1,3 +1,4 @@
+
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from api import crud, security
@@ -6,6 +7,7 @@ from .models import Lender, LenderCreate, Token
 
 router = APIRouter(prefix="/lenders")
 
+# Get all lenders
 @router.get("/")
 def get_all_lenders(db: Session = Depends(get_db), skip: int = 0, limit: int = 10, token: dict = Depends(security.verify_token)):
     if "sub" not in token:
@@ -13,11 +15,13 @@ def get_all_lenders(db: Session = Depends(get_db), skip: int = 0, limit: int = 1
     lenders = crud.get_all_lenders(db=db, skip=skip, limit=limit)
     return lenders
 
+# Count all lenders
 @router.get("/count/all")
 def count_lenders(db: Session = Depends(get_db)):
     count = crud.count_lenders(db)
     return count
 
+# Search lenders by name
 @router.get("/search")
 def search_by_name(lender_name: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
@@ -25,6 +29,7 @@ def search_by_name(lender_name: str, skip: int = 0, limit: int = 10, db: Session
     lenders = crud.search_lender_by_name(db, lender_name, skip=skip, limit=limit)
     return lenders
 
+# Create a new lender
 @router.post("/new")
 def create_new_lender(lender_data: LenderCreate, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     new_lender_data = {'lender_name': lender_data.lender_name}
@@ -32,8 +37,9 @@ def create_new_lender(lender_data: LenderCreate, db: Session = Depends(get_db), 
     if lender:
         return lender
     else:
-        raise  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to add new lender")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to add new lender")
 
+# Update a lender
 @router.post("/update")
 def update_lender(lender_id: int, new_lender_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
@@ -42,5 +48,4 @@ def update_lender(lender_id: int, new_lender_data: dict, db: Session = Depends(g
     if db_lender:
         return db_lender
     else:
-        raise  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update lender")
-        
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update lender")

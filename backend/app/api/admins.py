@@ -1,3 +1,4 @@
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from api import crud, security, models
@@ -6,21 +7,24 @@ from .models import Admin, AdminCreate, Token
 
 router = APIRouter(prefix="/admins")
 
+# Get all admins from the database
 @router.get("/")
 def get_all_admins(db: Session = Depends(get_db)):
     admins = crud.get_all_admins(db)
     return admins
 
+# Validate admin credentials and return a token
 @router.post("/login", response_model=Token)
 def validate_credentials(admin_data: AdminCreate, db: Session = Depends(get_db)):
     return (security.login(db, admin_data))
 
+# Count the number of admins in the database
 @router.get("/count/all")
 def count_admins(db: Session = Depends(get_db)):
     count = crud.count_admins(db)
     return count
 
-# takes requests in the form of {"username": "my_username", "password":"my_password"}
+# Register a new admin
 @router.post("/register")
 def register_admin(admin_data: AdminCreate, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
@@ -31,8 +35,9 @@ def register_admin(admin_data: AdminCreate, db: Session = Depends(get_db), token
     if admin:
         return admin
     else:
-        raise  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to create admin")
-    
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to create admin")
+
+# Update an existing admin
 @router.post("/update")
 def update_admin(admin_id: int, new_admin_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
@@ -41,5 +46,4 @@ def update_admin(admin_id: int, new_admin_data: dict, db: Session = Depends(get_
     if db_admin:
         return db_admin
     else:
-        raise  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update admin")
-        
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update admin")

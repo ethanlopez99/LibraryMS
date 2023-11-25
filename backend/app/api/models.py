@@ -1,3 +1,4 @@
+
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from pydantic import BaseModel
@@ -53,6 +54,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+# Transaction object created as a table in database. Each transaction object has only one book_id and one lender_id.
 class Transaction(Base):
     __tablename__ = "transactions"
     id = Column(Integer, primary_key=True, index=True)
