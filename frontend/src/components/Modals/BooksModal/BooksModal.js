@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Async from "react-select/async";
 import axios from "axios";
 
 import "./BooksModal.css";
@@ -8,17 +7,11 @@ import Entry from "../../Entry/Entry";
 import { IoCloseOutline } from "react-icons/io5";
 
 const BooksModal = ({ setBooksModalShow, userToken }) => {
-  const [bookSelected, setBookSelected] = useState();
   const [books, setBooks] = useState();
 
   useEffect(() => {
     getBooks({ target: { value: "" } });
   }, []);
-
-  const handleSelectBook = (option) => {
-    const book = option;
-    setBookSelected(book);
-  };
 
   const getBooks = async (event) => {
     console.log(event.target.value);
