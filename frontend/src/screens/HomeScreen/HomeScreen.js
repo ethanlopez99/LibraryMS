@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MenuItem from "../../components/MenuItem/MenuItem";
+import axios from "axios";
 
 import Logo from "../../assets/images/Logo.png";
 import "./HomeScreen.css";
@@ -8,29 +9,77 @@ import { PiBooksFill, PiArrowCircleUpBold } from "react-icons/pi";
 import { FaUserFriends, FaUserShield, FaChartBar } from "react-icons/fa";
 import LoanBookModal from "../../components/Modals/LoanBookModal/LoanBookModal";
 import ReturnBookModal from "../../components/Modals/ReturnBookModal/ReturnBookModal";
-
-const menuItems = [
-  { Icon: PiBooksFill, title: "Books", value: 10, color: "green" },
-  {
-    Icon: PiArrowCircleUpBold,
-    title: "Current Loans",
-    value: 10,
-    color: "blue",
-  },
-  { Icon: FaUserFriends, title: "Lenders", value: 10, color: "orange" },
-  { Icon: FaUserShield, title: "Admins", value: 10, color: "red" },
-  {
-    Icon: FaChartBar,
-    title: "Most Popular Books",
-    value: 10,
-    color: "chocolate",
-  },
-];
+import BooksModal from "../../components/Modals/BooksModal/BooksModal";
 
 const HomeScreen = ({ userToken, setUserToken }) => {
   // Creating states for modal pages
   const [loanBookModalShow, setLoanBookModalShow] = useState(false);
   const [returnBookModalShow, setReturnBookModalShow] = useState(false);
+  const [booksModalShow, setBooksModalShow] = useState(false);
+
+  const [numberOfBooks, setNumberOfBooks] = useState();
+  const [numberOfLoans, setNumberOfLoans] = useState();
+  const [numberOfLenders, setNumberOfLenders] = useState();
+  const [numberOfAdmins, setNumberOfAdmins] = useState();
+
+  useEffect(() => {
+    getNumberOfBooks();
+    getNumberOfLoans();
+    getNumberOfLenders();
+    getNumberOfAdmins();
+  }, []);
+  const getNumberOfBooks = async () => {
+    const response = await axios.get("http://127.0.0.1:8000/books/count/all");
+    setNumberOfBooks(response.data);
+  };
+  const getNumberOfLoans = async () => {
+    const response = await axios.get(
+      "http://127.0.0.1:8000/books/count/unavailable"
+    );
+    setNumberOfLoans(response.data);
+  };
+  const getNumberOfLenders = async () => {
+    const response = await axios.get("http://127.0.0.1:8000/lenders/count/all");
+    setNumberOfLenders(response.data);
+  };
+  const getNumberOfAdmins = async () => {
+    const response = await axios.get("http://127.0.0.1:8000/lenders/count/all");
+    setNumberOfAdmins(response.data);
+  };
+
+  const menuItems = [
+    {
+      Icon: PiBooksFill,
+      title: "Books",
+      value: numberOfBooks,
+      color: "green",
+      Modal: setBooksModalShow,
+    },
+    {
+      Icon: PiArrowCircleUpBold,
+      title: "Current Loans",
+      value: numberOfLoans,
+      color: "blue",
+    },
+    {
+      Icon: FaUserFriends,
+      title: "Lenders",
+      value: numberOfLenders,
+      color: "orange",
+    },
+    {
+      Icon: FaUserShield,
+      title: "Admins",
+      value: numberOfAdmins,
+      color: "red",
+    },
+    {
+      Icon: FaChartBar,
+      title: "Most Popular Books",
+      value: 5, // Always shows the top 5 most popular books
+      color: "chocolate",
+    },
+  ];
 
   const handleLogout = () => {
     setUserToken(null);
@@ -68,7 +117,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
             title={item.title}
             value={item.value}
             color={item.color}
-            openModal={() => console.log(item.title)}
+            openModal={() => item.Modal(true)}
             key={`${item.title}_item`}
           />
         ))}
@@ -83,6 +132,12 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <ReturnBookModal
           userToken={userToken}
           setReturnBookModalShow={setReturnBookModalShow}
+        />
+      )}
+      {booksModalShow && (
+        <BooksModal
+          userToken={userToken}
+          setBooksModalShow={setBooksModalShow}
         />
       )}
     </div>
