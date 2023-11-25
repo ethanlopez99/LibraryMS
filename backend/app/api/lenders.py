@@ -13,6 +13,11 @@ def get_all_lenders(db: Session = Depends(get_db), skip: int = 0, limit: int = 1
     lenders = crud.get_all_lenders(db=db, skip=skip, limit=limit)
     return lenders
 
+@router.get("/count/all")
+def count_lenders(db: Session = Depends(get_db)):
+    count = crud.count_lenders(db)
+    return count
+
 @router.get("/search")
 def search_by_name(lender_name: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:

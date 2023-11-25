@@ -122,6 +122,8 @@ def get_all_lenders(db: Session, skip: int = 0, limit: int = 10):
 def search_lender_by_name(db: Session, lender_name: str, skip: int = 0, limit: int = 10):
     return db.query(Lender).filter(Lender.lender_name.ilike(lender_name)).offset(skip).limit(limit).all()
 
+def count_lenders(db: Session):
+    return db.query(Lender).count()
 
 def new_lender(db: Session, lender_data: Lender):
     new_lender_data = Lender(lender_name=lender_data['lender_name'])
