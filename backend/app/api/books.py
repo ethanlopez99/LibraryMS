@@ -20,6 +20,21 @@ def search_by_name(title: str, skip: int = 0, limit: int = 10, db: Session = Dep
     books = crud.search_books_by_name(db, title, skip=skip, limit=limit)
     return books
 
+@router.get("/count/all")
+def count_books(db: Session = Depends(get_db)):
+    count = crud.count_books(db)
+    return count
+
+@router.get("/count/unavailable")
+def count_unavailable_books(db: Session = Depends(get_db)):
+    count = crud.count_unavailable_books(db)
+    return count
+
+@router.get("/popular")
+def get_popular_books(db: Session = Depends(get_db), limit: int = 10):
+    popular_books = crud.get_popular_books(db, limit)
+    return popular_books
+
 @router.post("/new")
 def create_new_book(book_data: BookCreate, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:

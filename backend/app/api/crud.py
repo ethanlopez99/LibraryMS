@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from .models import Admin, AdminCreate, Book, BookCreate, Lender, LenderCreate, Transaction, TransactionCreate
 
+from sqlalchemy import func
+
 from passlib.context import CryptContext
 
 # ===== ADMIN CRUD FUNCTIONS ===== #
@@ -96,6 +98,22 @@ def update_book(db: Session, book_id: int, update_data: dict):
         return db_book
     return None
 
+def count_books(db: Session):
+    return db.query(Book).count()
+
+def count_unavailable_books(db: Session):
+    return db.query(Book).filter(Book.is_available == False).count()
+
+def get_most_lent_books(db: Session, limit: int = 5):
+    return (
+        db.query(Transaction.book_id, func.count(Transaction.book_id).label("count"))
+        .filter(Transaction.transaction_type == 1)
+        .group_by(Transaction.book_id)
+        .order_by(func.count(Transaction.book_id).desc())
+        .limit(limit)
+        .all()
+    )
+
 # ===== LENDERS CRUD FUNCTIONS ===== #
 
 def get_all_lenders(db: Session, skip: int = 0, limit: int = 10):
@@ -103,6 +121,7 @@ def get_all_lenders(db: Session, skip: int = 0, limit: int = 10):
 
 def search_lender_by_name(db: Session, lender_name: str, skip: int = 0, limit: int = 10):
     return db.query(Lender).filter(Lender.lender_name.ilike(lender_name)).offset(skip).limit(limit).all()
+
 
 def new_lender(db: Session, lender_data: Lender):
     new_lender_data = Lender(lender_name=lender_data['lender_name'])
