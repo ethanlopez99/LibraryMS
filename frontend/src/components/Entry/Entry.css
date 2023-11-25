@@ -1,0 +1,8 @@
+.entry {
+  display: flex;
+  height: min-content;
+
+  justify-content: center;
+  background-color: white;
+  padding: 0 1rem;
+}

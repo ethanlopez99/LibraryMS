@@ -1,0 +1,12 @@
+.books_modal {
+  display: flex;
+}
+
+.selection_container {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+
+  flex: 1;
+  align-items: center;
+}
