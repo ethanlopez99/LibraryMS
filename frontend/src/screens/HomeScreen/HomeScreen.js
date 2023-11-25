@@ -10,12 +10,16 @@ import { FaUserFriends, FaUserShield, FaChartBar } from "react-icons/fa";
 import LoanBookModal from "../../components/Modals/LoanBookModal/LoanBookModal";
 import ReturnBookModal from "../../components/Modals/ReturnBookModal/ReturnBookModal";
 import BooksModal from "../../components/Modals/BooksModal/BooksModal";
+import CreateBookModal from "../../components/Modals/CreateBookModal/CreateBookModal";
+import CreateLenderModal from "../../components/Modals/CreateLenderModal/CreateLenderModal";
 
 const HomeScreen = ({ userToken, setUserToken }) => {
   // Creating states for modal pages
   const [loanBookModalShow, setLoanBookModalShow] = useState(false);
   const [returnBookModalShow, setReturnBookModalShow] = useState(false);
   const [booksModalShow, setBooksModalShow] = useState(false);
+  const [createBookModalShow, setCreateBookModalShow] = useState(false);
+  const [createLenderModalShow, setCreateLenderModalShow] = useState(false);
 
   const [numberOfBooks, setNumberOfBooks] = useState();
   const [numberOfLoans, setNumberOfLoans] = useState();
@@ -107,6 +111,20 @@ const HomeScreen = ({ userToken, setUserToken }) => {
           >
             Return Book
           </button>
+          <div className="dropdown">
+            <button className="navbar_button admin_settings">
+              Admin Settings
+            </button>
+            <div className="dropdown_content">
+              <a onClick={() => setCreateBookModalShow(true)}>
+                Register New Book
+              </a>
+              <a onClick={() => setCreateLenderModalShow(true)}>
+                Register New Lender
+              </a>
+              <a onClick={() => console.log("test")}>Update Password</a>
+            </div>
+          </div>
         </div>
         <div style={{ height: "5px", background: "purple" }} />
       </nav>
@@ -126,6 +144,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <LoanBookModal
           userToken={userToken}
           setLoanBookModalShow={setLoanBookModalShow}
+          getNumberOfLoans={getNumberOfLoans}
         />
       )}
       {returnBookModalShow && (
@@ -138,6 +157,20 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <BooksModal
           userToken={userToken}
           setBooksModalShow={setBooksModalShow}
+        />
+      )}
+      {createBookModalShow && (
+        <CreateBookModal
+          userToken={userToken}
+          setCreateBookModalShow={setCreateBookModalShow}
+          getNumberOfBooks={getNumberOfBooks}
+        />
+      )}
+      {createLenderModalShow && (
+        <CreateLenderModal
+          userToken={userToken}
+          setCreateLenderModalShow={setCreateLenderModalShow}
+          getNumberOfLenders={getNumberOfLenders}
         />
       )}
     </div>
