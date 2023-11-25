@@ -17,6 +17,9 @@ def create_admin(db: Session, admin_data: AdminCreate):
 def get_all_admins(db: Session):
     return db.query(Admin).all()
 
+def count_admins(db: Session):
+    return db.query(Admin).count()
+
 def get_admin(db:Session, admin_id: int):
     return db.query(Admin).filter(Admin.id == admin_id).first()
 

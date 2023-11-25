@@ -15,6 +15,11 @@ def get_all_admins(db: Session = Depends(get_db)):
 def validate_credentials(admin_data: AdminCreate, db: Session = Depends(get_db)):
     return (security.login(db, admin_data))
 
+@router.get("/count/all")
+def count_admins(db: Session = Depends(get_db)):
+    count = crud.count_admins(db)
+    return count
+
 # takes requests in the form of {"username": "my_username", "password":"my_password"}
 @router.post("/register")
 def register_admin(admin_data: AdminCreate, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
