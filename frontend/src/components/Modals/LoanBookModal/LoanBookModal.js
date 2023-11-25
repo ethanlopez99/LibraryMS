@@ -64,6 +64,13 @@ const LoanBookModal = ({ setLoanBookModalShow, userToken }) => {
   };
 
   const handleSubmit = async () => {
+    if (!bookSelected || !lenderSelected) {
+      setMessage({
+        message: "Please select a book and a lendee",
+        color: "red",
+      });
+      return null;
+    }
     const transaction = {
       book_id: bookSelected.value,
       lender_id: lenderSelected.value,
