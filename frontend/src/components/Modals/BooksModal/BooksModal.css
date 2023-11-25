@@ -2,7 +2,7 @@
   display: flex;
 }
 
-.selection_container {
+.selection_container_books {
   display: flex;
   width: 100%;
   justify-content: space-evenly;

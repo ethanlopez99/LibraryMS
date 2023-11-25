@@ -51,12 +51,12 @@ const BooksModal = ({ setBooksModalShow, userToken }) => {
           />
         </div>
         <h1>All Books</h1>
-        <div className="selection_container">
+        <div className="selection_container_books_modal">
           <h3>Book Name</h3>
           <input onChange={getBooks} />
         </div>
 
-        <div style={{ width: "80%" ,flex: "3" }}>
+        <div style={{ width: "80%", flex: "3" }}>
           {books &&
             books.map((book) => (
               <>
