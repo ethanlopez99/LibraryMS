@@ -7,7 +7,11 @@ import DropdownOption from "../../DropdownOption/DropdownOption";
 
 import { IoCloseOutline } from "react-icons/io5";
 
-const LoanBookModal = ({ setLoanBookModalShow, userToken }) => {
+const LoanBookModal = ({
+  setLoanBookModalShow,
+  userToken,
+  getNumberOfLoans,
+}) => {
   const [bookSelected, setBookSelected] = useState();
   const [lenderSelected, setLenderSelected] = useState();
   const [message, setMessage] = useState(false);
@@ -84,6 +88,7 @@ const LoanBookModal = ({ setLoanBookModalShow, userToken }) => {
       );
 
       setMessage({ message: "Book loan successful", color: "darkgreen" });
+      getNumberOfLoans();
     } catch (error) {
       if (error.response.status == 422) {
         setMessage({ message: error.response.data.detail, color: "red" });
