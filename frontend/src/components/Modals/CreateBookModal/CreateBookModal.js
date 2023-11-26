@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
+
+import * as Yup from "yup";
 
 import "./CreateBookModal.css";
 
@@ -13,7 +15,13 @@ const CreateBookModal = ({
 }) => {
   const [message, setMessage] = useState(false);
 
-  const handleSubmit = async (values) => {
+  const validationSchema = Yup.object().shape({
+    book_name: Yup.string().required("Required").label("Book Name"),
+    author: Yup.string().required("Required").label("Author"),
+  });
+
+  const handleSubmit = async (values, { resetForm, errors }) => {
+    console.log(errors);
     const new_book = { title: values.book_name, author: values.author };
     try {
       const response = await axios.post(
@@ -22,11 +30,20 @@ const CreateBookModal = ({
         { headers: { Authorization: `Bearer ${userToken}` } }
       );
       getNumberOfBooks();
-      console.log(response);
-    } catch (error) {}
+      resetForm();
+      setMessage({
+        message: `New Book ${response.data.title} created with id ${response.data.id}`,
+        color: "green",
+      });
+    } catch (error) {
+      setMessage({
+        message: "Unable to create book. Please try again",
+        color: "red",
+      });
+    }
   };
 
-  const handleReset = async () => {};
+  const handleReset = async ({}) => {};
 
   return (
     <div className="modal_bg">
@@ -42,7 +59,7 @@ const CreateBookModal = ({
         <Formik
           initialValues={{ book_name: "", author: "" }}
           onSubmit={handleSubmit}
-          //   validationSchema={validationSchema}
+          validationSchema={validationSchema}
         >
           <Form>
             <div className="app_login-form_field_container">
@@ -53,6 +70,7 @@ const CreateBookModal = ({
                 placeholder="Title"
                 className="app_login-form_input_field"
               />
+              <ErrorMessage name="book_name" component="div" />
             </div>
             <div className="app_login-form_field_container">
               <Field
@@ -62,6 +80,7 @@ const CreateBookModal = ({
                 placeholder="Author"
                 className="app_login-form_input_field"
               />
+              <ErrorMessage name="author" component="div" />
             </div>
             <button type="submit" className="app_login-form_submit">
               Create New Book
@@ -70,7 +89,7 @@ const CreateBookModal = ({
         </Formik>
         {message && <h1 style={{ color: message.color }}>{message.message}</h1>}
         <div className="modal_buttons">
-          <button type="reset" onClick={handleReset}>
+          <button type="reset" onClick={({ resetForm }) => resetForm()}>
             Clear Fields
           </button>
         </div>
