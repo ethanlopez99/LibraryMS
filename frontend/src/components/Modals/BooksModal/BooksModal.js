@@ -22,14 +22,31 @@ const BooksModal = ({ setBooksModalShow, userToken }) => {
         { headers: { Authorization: `Bearer ${userToken}` } }
       );
 
+      const books = response.data;
       const formattedBooks = response.data.map((book) => ({
-        value: book.id,
-        label: book.title,
+        id: book.id,
+        title: book.title,
+        author: book.author,
       }));
-      setBooks(formattedBooks);
-      return formattedBooks;
+      setBooks(books);
     } catch (error) {
       return [];
+    }
+  };
+
+  const handleUpdate = async (book) => {
+    try {
+      const response = await axios.post(
+        `http://127.0.0.1:8000/books/update`,
+        book,
+        { headers: { Authorization: `Bearer ${userToken}` } }
+      );
+      console.log(response);
+      if (response.status === 200) {
+        getBooks({ target: { value: "" } });
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -53,7 +70,7 @@ const BooksModal = ({ setBooksModalShow, userToken }) => {
           {books &&
             books.map((book) => (
               <>
-                <Entry name={book.label} id={book.value} />
+                <Entry book={book} handleUpdate={handleUpdate} />
                 <div style={{ height: "2px", background: "lightgrey" }} />
               </>
             ))}
