@@ -23,7 +23,7 @@ def count_admins(db: Session):
 def get_admin(db:Session, admin_id: int):
     return db.query(Admin).filter(Admin.id == admin_id).first()
 
-def updateAdmin(db: Session, admin_id: int, update_data: dict):
+def update_admin(db: Session, admin_id: int, update_data: dict):
     db_admin = get_admin(db, admin_id)
     if db_admin:
         for key, value in update_data.items():

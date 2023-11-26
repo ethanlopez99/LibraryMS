@@ -21,7 +21,7 @@ def login(db: Session, admin_data: AdminCreate):
     # Authenticate the admin user and generate a JWT token if the credentials are valid.
     admin = db.query(Admin).filter(Admin.username == admin_data.username).first()
     if admin and pw_context.verify(admin_data.password, admin.password):
-        return {"access_token": create_jwt_token(data={"sub": admin.username}), "token_type": "bearer"}
+        return {"access_token": create_jwt_token(data={"sub": admin.username, "id": admin.id}), "token_type": "bearer"}
     else:
         raise HTTPException(
             status_code=401,
@@ -45,3 +45,4 @@ def verify_token(token: str = Depends(oauth2_scheme)):
         return payload
     except JWTError:
         raise credentials_exception
+    
