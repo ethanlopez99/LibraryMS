@@ -91,10 +91,12 @@ def is_book_available(db: Session, book_id: int):
     result = db.query(Book.is_available).filter(Book.id == book_id).all()
     return result[0].is_available if result else None
 
-def update_book(db: Session, book_id: int, update_data: dict):
-    db_book = db.query(Book).filter(Book.id == book_id).first()
+def update_book(db: Session, update_data: dict):
+    db_book = db.query(Book).filter(Book.id == update_data['id']).first()
     if db_book:
         for key, value in update_data.items():
+            if key == "book_id":
+                next
             setattr(db_book, key, value)
         db.commit()
         db.refresh(db_book)

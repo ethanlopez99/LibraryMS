@@ -55,10 +55,10 @@ def create_new_book(book_data: BookCreate, db: Session = Depends(get_db), token:
 
 # Update a book in the database
 @router.post("/update")
-def update_book(book_id: int, new_book_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
+def update_book(new_book_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
         raise HTTPException(status_code=401, detail="Not Authorized")
-    db_book = crud.update_book(book_id=book_id, update_data=new_book_data, db=db)
+    db_book = crud.update_book(update_data=new_book_data, db=db)
     if db_book:
         return db_book
     else:
