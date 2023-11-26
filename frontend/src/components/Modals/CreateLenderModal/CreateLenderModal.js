@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+
+import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 
 import "./CreateLenderModal.css";
 
@@ -13,6 +15,10 @@ const CreateLenderModal = ({
 }) => {
   const [message, setMessage] = useState(false);
 
+  const validationSchema = Yup.object().shape({
+    lender_name: Yup.string().required("Required").label("Book Name"),
+  });
+
   const handleSubmit = async (values) => {
     const new_book = { lender_name: values.lender_name };
     try {
@@ -23,10 +29,12 @@ const CreateLenderModal = ({
       );
       getNumberOfLenders();
       console.log(response);
+      setMessage({
+        message: `New Lender ${response.data.lender_name} created with id ${response.data.id}`,
+        color: "green",
+      });
     } catch (error) {}
   };
-
-  const handleReset = async () => {};
 
   return (
     <div className="modal_bg">
@@ -38,11 +46,11 @@ const CreateLenderModal = ({
             color="grey"
           />
         </div>
-        <h1>Create New Book</h1>
+        <h1>Create New Lender</h1>
         <Formik
           initialValues={{ lender_name: "" }}
           onSubmit={handleSubmit}
-          //   validationSchema={validationSchema}
+          validationSchema={validationSchema}
         >
           <Form>
             <div className="app_login-form_field_container">
@@ -53,18 +61,16 @@ const CreateLenderModal = ({
                 placeholder="Name"
                 className="app_login-form_input_field"
               />
+              <ErrorMessage name="lender_name" component="div" />
             </div>
             <button type="submit" className="app_login-form_submit">
               Create New Lender
             </button>
+            {message && (
+              <h1 style={{ color: message.color }}>{message.message}</h1>
+            )}
           </Form>
         </Formik>
-        {message && <h1 style={{ color: message.color }}>{message.message}</h1>}
-        <div className="modal_buttons">
-          <button type="reset" onClick={handleReset}>
-            Clear Fields
-          </button>
-        </div>
       </div>
     </div>
   );
