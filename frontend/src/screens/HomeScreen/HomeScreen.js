@@ -12,6 +12,7 @@ import ReturnBookModal from "../../components/Modals/ReturnBookModal/ReturnBookM
 import BooksModal from "../../components/Modals/BooksModal/BooksModal";
 import CreateBookModal from "../../components/Modals/CreateBookModal/CreateBookModal";
 import CreateLenderModal from "../../components/Modals/CreateLenderModal/CreateLenderModal";
+import UpdatePasswordModal from "../../components/Modals/UpdatePasswordModal/UpdatePasswordModal";
 
 const HomeScreen = ({ userToken, setUserToken }) => {
   // Creating states for modal pages
@@ -20,6 +21,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
   const [booksModalShow, setBooksModalShow] = useState(false);
   const [createBookModalShow, setCreateBookModalShow] = useState(false);
   const [createLenderModalShow, setCreateLenderModalShow] = useState(false);
+  const [updatePasswordModalShow, setUpdatePasswordModalShow] = useState(false);
 
   const [numberOfBooks, setNumberOfBooks] = useState();
   const [numberOfLoans, setNumberOfLoans] = useState();
@@ -122,7 +124,9 @@ const HomeScreen = ({ userToken, setUserToken }) => {
               <a onClick={() => setCreateLenderModalShow(true)}>
                 Register New Lender
               </a>
-              <a onClick={() => console.log("test")}>Update Password</a>
+              <a onClick={() => setUpdatePasswordModalShow(true)}>
+                Update Password
+              </a>
             </div>
           </div>
         </div>
@@ -171,6 +175,13 @@ const HomeScreen = ({ userToken, setUserToken }) => {
           userToken={userToken}
           setCreateLenderModalShow={setCreateLenderModalShow}
           getNumberOfLenders={getNumberOfLenders}
+        />
+      )}
+      {updatePasswordModalShow && (
+        <UpdatePasswordModal
+          userToken={userToken}
+          setUpdatePasswordModalShow={setUpdatePasswordModalShow}
+          setUserToken={setUserToken}
         />
       )}
     </div>
