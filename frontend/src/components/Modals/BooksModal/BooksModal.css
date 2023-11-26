@@ -1,5 +1,8 @@
 .books_modal {
   display: flex;
+  justify-self: center;
+  height: min-content;
+  padding-bottom: 2rem;
 }
 
 .selection_container_books {
