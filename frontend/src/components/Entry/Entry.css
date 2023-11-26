@@ -6,3 +6,15 @@
   background-color: white;
   padding: 0 1rem;
 }
+
+.edit_button {
+  margin: 0 1rem;
+  padding: 0.5rem;
+
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.edit_button:hover {
+  background-color: lightgrey;
+}
