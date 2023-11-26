@@ -38,7 +38,7 @@ def count_unavailable_books(db: Session = Depends(get_db)):
 # Get popular books from the database
 @router.get("/popular")
 def get_popular_books(db: Session = Depends(get_db), limit: int = 10):
-    popular_books = crud.get_popular_books(db, limit)
+    popular_books = crud.get_most_lent_books(db, limit)
     return popular_books
 
 # Create a new book in the database
