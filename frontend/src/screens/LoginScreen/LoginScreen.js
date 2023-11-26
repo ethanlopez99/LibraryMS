@@ -13,7 +13,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const LoginScreen = ({ setUserToken }) => {
-  const handleLogin = async ({ username, password, resetForm }) => {
+  const handleLogin = async ({ username, password }) => {
     const userAttempt = {
       username: username,
       password: password,
@@ -32,7 +32,6 @@ const LoginScreen = ({ setUserToken }) => {
       }
       console.error(error.message);
     }
-    resetForm();
   };
 
   return (
