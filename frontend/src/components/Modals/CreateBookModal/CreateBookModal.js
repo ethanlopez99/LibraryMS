@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 
 import * as Yup from "yup";
 
@@ -20,8 +20,7 @@ const CreateBookModal = ({
     author: Yup.string().required("Required").label("Author"),
   });
 
-  const handleSubmit = async (values, { resetForm, errors }) => {
-    console.log(errors);
+  const handleSubmit = async (values, { resetForm }) => {
     const new_book = { title: values.book_name, author: values.author };
     try {
       const response = await axios.post(
@@ -40,10 +39,9 @@ const CreateBookModal = ({
         message: "Unable to create book. Please try again",
         color: "red",
       });
+      console.log(error);
     }
   };
-
-  const handleReset = async ({}) => {};
 
   return (
     <div className="modal_bg">
@@ -85,14 +83,11 @@ const CreateBookModal = ({
             <button type="submit" className="app_login-form_submit">
               Create New Book
             </button>
+            {message && (
+              <h1 style={{ color: message.color }}>{message.message}</h1>
+            )}
           </Form>
         </Formik>
-        {message && <h1 style={{ color: message.color }}>{message.message}</h1>}
-        <div className="modal_buttons">
-          <button type="reset" onClick={({ resetForm }) => resetForm()}>
-            Clear Fields
-          </button>
-        </div>
       </div>
     </div>
   );
