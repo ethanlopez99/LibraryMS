@@ -6,7 +6,7 @@ import Entry from "../../Entry/Entry";
 
 import { IoCloseOutline } from "react-icons/io5";
 
-const BooksModal = ({ setBooksModalShow, userToken }) => {
+const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userToken, unavailable = false }) => {
   const [books, setBooks] = useState();
   const [message, setMessage] = useState();
 
@@ -17,10 +17,11 @@ const BooksModal = ({ setBooksModalShow, userToken }) => {
   const getBooks = async (event) => {
     console.log(event.target.value);
     // add request to get books by book name using input
+    const url = unavailable ? (`http://127.0.0.1:8000/books/search/unavailable?title=%${event.target.value}%`) : (`http://127.0.0.1:8000/books/search?title=%${event.target.value}%`)
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/books/search?title=%${event.target.value}%`,
-        { headers: { Authorization: `Bearer ${userToken}` } }
+      url,        
+      { headers: { Authorization: `Bearer ${userToken}` } }
       );
 
       const books = response.data;
@@ -57,7 +58,7 @@ const BooksModal = ({ setBooksModalShow, userToken }) => {
         <div className="app_modal-close">
           <IoCloseOutline
             size={50}
-            onClick={() => setBooksModalShow(false)}
+            onClick={() => unavailable ? setTransactionsModalShow(false) : setBooksModalShow(false)}
             color="grey"
           />
         </div>
@@ -71,7 +72,7 @@ const BooksModal = ({ setBooksModalShow, userToken }) => {
           {books &&
             books.map((book) => (
               <>
-                <Entry book={book} handleUpdate={handleUpdate} setErrorMessage={setMessage} />
+                <Entry book={book} handleUpdate={handleUpdate} setErrorMessage={setMessage} editable={!unavailable}/>
                 <div style={{ height: "2px", background: "lightgrey" }} />
               </>
             ))}
