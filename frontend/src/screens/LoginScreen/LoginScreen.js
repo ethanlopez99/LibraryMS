@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./LoginScreen.css";
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -13,6 +13,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const LoginScreen = ({ setUserToken }) => {
+  const [errorMessage, setErrorMessage] = useState();
+
   const handleLogin = async ({ username, password }) => {
     const userAttempt = {
       username: username,
@@ -25,10 +27,12 @@ const LoginScreen = ({ setUserToken }) => {
       );
       if (response.status === 200) {
         setUserToken(response.data.access_token);
+        setErrorMessage(null);
       }
     } catch (error) {
       if (error.response.status === 401) {
-        console.log("Incorrect username or password"); // to add Formik error handling here
+        console.log("Incorrect username or password");
+        setErrorMessage("Incorrect username or password, please try again");
       }
       console.error(error.message);
     }
@@ -65,6 +69,9 @@ const LoginScreen = ({ setUserToken }) => {
                 className="app_login-form_input_field"
               />
             </div>
+            {errorMessage && (
+              <div style={{ color: "red" }}>Incorrect username or Password</div>
+            )}
             <button type="submit" className="app_login-form_submit">
               Login
             </button>
