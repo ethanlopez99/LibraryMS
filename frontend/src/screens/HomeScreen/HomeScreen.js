@@ -11,6 +11,7 @@ import LoanBookModal from "../../components/Modals/LoanBookModal/LoanBookModal";
 import ReturnBookModal from "../../components/Modals/ReturnBookModal/ReturnBookModal";
 import BooksModal from "../../components/Modals/BooksModal/BooksModal";
 import LendersModal from "../../components/Modals/LendersModal/LendersModal";
+import TransactionsModal from "../../components/Modals/TransactionsModal/TransactionsModal";
 import CreateBookModal from "../../components/Modals/CreateBookModal/CreateBookModal";
 import CreateLenderModal from "../../components/Modals/CreateLenderModal/CreateLenderModal";
 import UpdatePasswordModal from "../../components/Modals/UpdatePasswordModal/UpdatePasswordModal";
@@ -21,6 +22,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
   const [returnBookModalShow, setReturnBookModalShow] = useState(false);
   const [booksModalShow, setBooksModalShow] = useState(false);
   const [lendersModalShow, setLendersModalShow] = useState(false);
+  const [transactionsModalShow, setTransactionsModalShow] = useState(false);
   const [createBookModalShow, setCreateBookModalShow] = useState(false);
   const [createLenderModalShow, setCreateLenderModalShow] = useState(false);
   const [updatePasswordModalShow, setUpdatePasswordModalShow] = useState(false);
@@ -68,6 +70,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
       title: "Current Loans",
       value: numberOfLoans,
       color: "blue",
+      Modal: setTransactionsModalShow
     },
     {
       Icon: FaUserFriends,
@@ -171,6 +174,12 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <LendersModal
           userToken={userToken}
           setLendersModalShow={setLendersModalShow}
+        />
+      )}
+      {transactionsModalShow && (
+        <TransactionsModal
+          userToken={userToken}
+          setTransactionsModalShow={setTransactionsModalShow}
         />
       )}
       {createBookModalShow && (
