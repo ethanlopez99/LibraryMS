@@ -3,7 +3,7 @@ import "./Entry.css";
 
 import { BiSolidPencil } from "react-icons/bi";
 
-const Entry = ({ book, handleUpdate, lender, setErrorMessage }) => {
+const Entry = ({ book, handleUpdate, lender, setErrorMessage, editable = true }) => {
   const [editMode, setEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState();
   const [editedAuthor, setEditedAuthor] = useState();    
@@ -88,7 +88,7 @@ useEffect(() => {
               >
               id: {book.id}
             </p>
-            <BiSolidPencil className="edit_button" onClick={handleEditClick} />
+            {editable && <BiSolidPencil className="edit_button" onClick={handleEditClick} />}
           </div>
         </>
       )}
@@ -126,7 +126,7 @@ useEffect(() => {
             >
             id: {lender.id}
           </p>
-          <BiSolidPencil className="edit_button" onClick={handleEditClick} />
+          {editable && <BiSolidPencil className="edit_button" onClick={handleEditClick} />}
         </div>
       </>
     )}
