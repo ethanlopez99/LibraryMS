@@ -10,6 +10,7 @@ import { FaUserFriends, FaUserShield, FaChartBar } from "react-icons/fa";
 import LoanBookModal from "../../components/Modals/LoanBookModal/LoanBookModal";
 import ReturnBookModal from "../../components/Modals/ReturnBookModal/ReturnBookModal";
 import BooksModal from "../../components/Modals/BooksModal/BooksModal";
+import LendersModal from "../../components/Modals/LendersModal/LendersModal";
 import CreateBookModal from "../../components/Modals/CreateBookModal/CreateBookModal";
 import CreateLenderModal from "../../components/Modals/CreateLenderModal/CreateLenderModal";
 import UpdatePasswordModal from "../../components/Modals/UpdatePasswordModal/UpdatePasswordModal";
@@ -19,6 +20,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
   const [loanBookModalShow, setLoanBookModalShow] = useState(false);
   const [returnBookModalShow, setReturnBookModalShow] = useState(false);
   const [booksModalShow, setBooksModalShow] = useState(false);
+  const [lendersModalShow, setLendersModalShow] = useState(false);
   const [createBookModalShow, setCreateBookModalShow] = useState(false);
   const [createLenderModalShow, setCreateLenderModalShow] = useState(false);
   const [updatePasswordModalShow, setUpdatePasswordModalShow] = useState(false);
@@ -72,6 +74,8 @@ const HomeScreen = ({ userToken, setUserToken }) => {
       title: "Lenders",
       value: numberOfLenders,
       color: "orange",
+      Modal: setLendersModalShow,
+
     },
     {
       Icon: FaUserShield,
@@ -161,6 +165,12 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <BooksModal
           userToken={userToken}
           setBooksModalShow={setBooksModalShow}
+        />
+      )}
+      {lendersModalShow && (
+        <LendersModal
+          userToken={userToken}
+          setLendersModalShow={setLendersModalShow}
         />
       )}
       {createBookModalShow && (
