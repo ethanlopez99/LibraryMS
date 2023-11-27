@@ -106,6 +106,9 @@ def update_book(db: Session, update_data: dict):
 def count_books(db: Session):
     return db.query(Book).count()
 
+def get_all_unavailable_books_by_name(db: Session, title: str, skip: int = 0, limit: int = 10):
+    return db.query(Book).filter(Book.title.ilike(title)).filter(Book.is_available == False).filter(Book.title.ilike(title)).offset(skip).limit(limit).all()
+
 def count_unavailable_books(db: Session):
     return db.query(Book).filter(Book.is_available == False).count()
 
