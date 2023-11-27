@@ -32,6 +32,8 @@ def search_by_name(lender_name: str, skip: int = 0, limit: int = 10, db: Session
 # Create a new lender
 @router.post("/new")
 def create_new_lender(lender_data: LenderCreate, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
+    if "sub" not in token:
+        raise HTTPException(status_code=401, detail="Not Authorized")
     new_lender_data = {'lender_name': lender_data.lender_name}
     lender = crud.new_lender(db=db, lender_data=new_lender_data)
     if lender:
