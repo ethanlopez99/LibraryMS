@@ -8,6 +8,7 @@ import { IoCloseOutline } from "react-icons/io5";
 
 const BooksModal = ({ setBooksModalShow, userToken }) => {
   const [books, setBooks] = useState();
+  const [message, setMessage] = useState();
 
   useEffect(() => {
     getBooks({ target: { value: "" } });
@@ -70,11 +71,12 @@ const BooksModal = ({ setBooksModalShow, userToken }) => {
           {books &&
             books.map((book) => (
               <>
-                <Entry book={book} handleUpdate={handleUpdate} />
+                <Entry book={book} handleUpdate={handleUpdate} setErrorMessage={setMessage} />
                 <div style={{ height: "2px", background: "lightgrey" }} />
               </>
             ))}
         </div>
+        {message && <h3 style={{color: message.color}}>{message.message}</h3>}
       </div>
     </div>
   );
