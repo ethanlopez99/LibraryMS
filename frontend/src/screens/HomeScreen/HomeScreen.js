@@ -7,6 +7,8 @@ import "./HomeScreen.css";
 
 import { PiBooksFill, PiArrowCircleUpBold } from "react-icons/pi";
 import { FaUserFriends, FaUserShield, FaChartBar } from "react-icons/fa";
+
+// Import all modals 
 import LoanBookModal from "../../components/Modals/LoanBookModal/LoanBookModal";
 import ReturnBookModal from "../../components/Modals/ReturnBookModal/ReturnBookModal";
 import BooksModal from "../../components/Modals/BooksModal/BooksModal";
@@ -18,7 +20,7 @@ import CreateLenderModal from "../../components/Modals/CreateLenderModal/CreateL
 import UpdatePasswordModal from "../../components/Modals/UpdatePasswordModal/UpdatePasswordModal";
 
 const HomeScreen = ({ userToken, setUserToken }) => {
-  // Creating states for modal pages
+  // Creating states for all modal pages, used to know when to show each
   const [loanBookModalShow, setLoanBookModalShow] = useState(false);
   const [returnBookModalShow, setReturnBookModalShow] = useState(false);
   const [booksModalShow, setBooksModalShow] = useState(false);
@@ -29,36 +31,45 @@ const HomeScreen = ({ userToken, setUserToken }) => {
   const [createLenderModalShow, setCreateLenderModalShow] = useState(false);
   const [updatePasswordModalShow, setUpdatePasswordModalShow] = useState(false);
 
+  // Variables created to show number of entries for each of the dashboard items
   const [numberOfBooks, setNumberOfBooks] = useState();
   const [numberOfLoans, setNumberOfLoans] = useState();
   const [numberOfLenders, setNumberOfLenders] = useState();
   const [numberOfAdmins, setNumberOfAdmins] = useState();
 
+  // Get all initial values at the beginning, only once (thus "[]")
   useEffect(() => {
     getNumberOfBooks();
     getNumberOfLoans();
     getNumberOfLenders();
     getNumberOfAdmins();
   }, []);
+  // Get number of books in database
   const getNumberOfBooks = async () => {
     const response = await axios.get("http://127.0.0.1:8000/books/count/all");
     setNumberOfBooks(response.data);
   };
+  // Get number of loans in database (i.e., unavailable books)
   const getNumberOfLoans = async () => {
     const response = await axios.get(
       "http://127.0.0.1:8000/books/count/unavailable"
     );
     setNumberOfLoans(response.data);
   };
+  
+  // Get number of lenders from the database
   const getNumberOfLenders = async () => {
     const response = await axios.get("http://127.0.0.1:8000/lenders/count/all");
     setNumberOfLenders(response.data);
   };
+
+  // Get number of admins from the database
   const getNumberOfAdmins = async () => {
     const response = await axios.get("http://127.0.0.1:8000/lenders/count/all");
     setNumberOfAdmins(response.data);
   };
 
+  // Define each of the dashboard items, with the modals they open up
   const menuItems = [
     {
       Icon: PiBooksFill,
@@ -97,6 +108,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
     },
   ];
 
+  // Remove user token to log out and bring user back to login
   const handleLogout = () => {
     setUserToken(null);
   };
@@ -143,6 +155,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <div style={{ height: "5px", background: "purple" }} />
       </nav>
       <div className="app_home-dashboard_container">
+        {/* Add each of the items to the dashboard as a MenuItem object */}
         {menuItems.map((item) => (
           <MenuItem
             Icon={item.Icon}
@@ -154,6 +167,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
           />
         ))}
       </div>
+      {/* Show each of the modals, based on their values set to true */}
       {loanBookModalShow && (
         <LoanBookModal
           userToken={userToken}
