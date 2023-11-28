@@ -16,7 +16,7 @@ def get_all_books(db: Session = Depends(get_db), token: dict = Depends(security.
     return books
 
 @router.get("/search/unavailable")
-def get_all_unavailable_books(title: str, skip: int =0, limit: int = 0, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
+def get_all_unavailable_books(title: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
         raise HTTPException(status_code=401, detail="Not Authorized")
     books = crud.get_all_unavailable_books_by_name(db = db, title = title, limit = limit, skip = skip)
