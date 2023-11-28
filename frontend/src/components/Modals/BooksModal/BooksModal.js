@@ -34,7 +34,7 @@ const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userT
     } catch (error) {
       // log error to console for further debugging by user if needed
       console.log(error)
-      // If error retrieving books, let user know and do not update books
+      // If error retrieving books, let user know
       setMessage({message: "Error retrieving books, please try again", color:"red"})
     }
   };
