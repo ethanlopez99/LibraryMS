@@ -6,34 +6,43 @@ import * as Yup from "yup";
 import axios from "axios";
 
 import login_background from "../../assets/images/login_background.jpg";
-
+// Validation schema created, for use in Formik form to make sure no empty fields
 const validationSchema = Yup.object().shape({
   username: Yup.string().required("Required").label("Username"),
   password: Yup.string().required("Required").label("Password"),
 });
 
 const LoginScreen = ({ setUserToken }) => {
+  // Defines errorMessage, for future errors
   const [errorMessage, setErrorMessage] = useState();
 
+  // Handles login, taking in username and password from form
   const handleLogin = async ({ username, password }) => {
+    // Creates user attempt object, to make post request cleaner
     const userAttempt = {
       username: username,
       password: password,
     };
     try {
+      // Make post request with user data to the specified login endpoint
       const response = await axios.post(
         "http://127.0.0.1:8000/admins/login",
         userAttempt
       );
+      // If user has been verified by API, status will be 200.
       if (response.status === 200) {
+        // Populate user token with token provided by API
         setUserToken(response.data.access_token);
+        // Remove any error messages if present
         setErrorMessage(null);
       }
     } catch (error) {
+      // Handle authentication error, 401 if not authorised
       if (error.response.status === 401) {
-        console.log("Incorrect username or password");
+        // Set error message
         setErrorMessage("Incorrect username or password, please try again");
       }
+      // Log error message to console for further information
       console.error(error.message);
     }
   };
@@ -69,6 +78,7 @@ const LoginScreen = ({ setUserToken }) => {
                 className="app_login-form_input_field"
               />
             </div>
+            {/* Error message is shown if it has been set by the login function */}
             {errorMessage && (
               <div style={{ color: "red" }}>Incorrect username or Password</div>
             )}
