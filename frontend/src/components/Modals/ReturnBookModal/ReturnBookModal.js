@@ -8,7 +8,7 @@ import { IoCloseOutline } from "react-icons/io5";
 
 import "./ReturnBookModal";
 
-const ReturnBookModal = ({ userToken, setReturnBookModalShow }) => {
+const ReturnBookModal = ({ userToken, setReturnBookModalShow, getNumberOfLoans }) => {
   const [bookSelected, setBookSelected] = useState();
   const [lenderSelected, setLenderSelected] = useState();
   const [message, setMessage] = useState(false);
@@ -78,6 +78,7 @@ const ReturnBookModal = ({ userToken, setReturnBookModalShow }) => {
       );
 
       setMessage({ message: "Book return successful", color: "darkgreen" });
+      getNumberOfLoans();
     } catch (error) {
       console.log(error);
       if (error.response.status == 422) {
