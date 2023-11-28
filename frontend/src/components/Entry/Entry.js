@@ -3,7 +3,7 @@ import "./Entry.css";
 
 import { BiSolidPencil } from "react-icons/bi";
 
-const Entry = ({ book, handleUpdate, lender, setErrorMessage, editable = true }) => {
+const Entry = ({ book, handleUpdate, lender, setErrorMessage, editable = true, count }) => {
   const [editMode, setEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState();
   const [editedAuthor, setEditedAuthor] = useState();    
@@ -69,8 +69,10 @@ useEffect(() => {
         </>
       ) : (
         <>
-          <p style={{ textAlign: "left", flex: 1 }}>{book.title}</p>
-          <p style={{ textAlign: "left", flex: 0.6 }}>{book.author}</p>
+          <p style={{ textAlign: "left", flex: 1.5 }}>{book.title}</p>
+          <p style={{ textAlign: "left", flex: 0.8 }}>{book.author}</p>
+          {count && <p style={{ textAlign: "left", flex: 0.3 }}>{count}</p>}
+
           <div
             style={{
               display: "flex",
