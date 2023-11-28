@@ -6,22 +6,27 @@ import Entry from "../../Entry/Entry";
 import { IoCloseOutline } from "react-icons/io5";
 
 const BooksModal = ({ setPopularBooksModalShow, userToken }) => {
-
+    // define books and setBooks for future use
     const [books, setBooks] = useState();
 
+    // on load, get top 5 popular books (backend limits to 5)
     useEffect(() => {
         getPopularBooks();
     }, [])
 
     const getPopularBooks = async () => {
         try {
+          // make get request to API
             const response = await axios.get("http://127.0.0.1:8000/books/popular", {headers: {Authorization: `Bearer ${userToken}`}})
+            // store response and save as popular_books, in order to change books
             const popular_books = response.data
-            console.log(response)
             setBooks(popular_books)
-        } catch (error) {
-            console.error(error)
-        }
+          } catch (error) {
+            // log error to console for further debugging by user if needed
+            console.log(error)
+            // If error retrieving books, let user know
+            setMessage({message: "Error retrieving books, please try again", color:"red"})
+          }
     }
 
   return (
@@ -40,6 +45,7 @@ const BooksModal = ({ setPopularBooksModalShow, userToken }) => {
         </div>
 
         <div style={{ width: "80%", flex: "3" }}>
+          {/* map every book to a new Entry component, with the editable prop set to false, and a loan count added */}
           {books &&
             books.map((book) => (
               <>
