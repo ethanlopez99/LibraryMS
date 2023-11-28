@@ -2,12 +2,12 @@
 import BooksModal from "../BooksModal/BooksModal";
 
 
-function TransactionsModal({userToken, setTransactionsModalShow}){
+function TransactionsModal({userToken, setTransactionsModalShow, getNumberOfLoans}){
 
 
     return (
         <>
-            <BooksModal unavailable={true} setTransactionsModalShow={setTransactionsModalShow}/>
+            <BooksModal unavailable={true} setTransactionsModalShow={setTransactionsModalShow} userToken={userToken} />
         </>
   );
 };
