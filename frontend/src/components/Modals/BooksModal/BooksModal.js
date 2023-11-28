@@ -6,17 +6,20 @@ import Entry from "../../Entry/Entry";
 
 import { IoCloseOutline } from "react-icons/io5";
 
+// BooksModal defined, with parameters for transactions modal (to reuse code)
 const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userToken, unavailable = false }) => {
+  // Create books, setBooks, message and setMessage for future use
   const [books, setBooks] = useState();
   const [message, setMessage] = useState();
 
+  // On load, get all books (backend will limit to 10)
   useEffect(() => {
     getBooks({ target: { value: "" } });
   }, []);
 
+  // get all books from API. Using "event" as input here, to match "input" component's syntax
   const getBooks = async (event) => {
-    console.log(event.target.value);
-    // add request to get books by book name using input
+    // if unavailable has been declared, find unavailable books, otherwise find all books from API 
     const url = unavailable ? (`http://127.0.0.1:8000/books/search/unavailable?title=%${event.target.value}%`) : (`http://127.0.0.1:8000/books/search?title=%${event.target.value}%`)
     try {
       const response = await axios.get(
@@ -24,18 +27,19 @@ const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userT
       { headers: { Authorization: `Bearer ${userToken}` } }
       );
 
+      // save API response data to books
       const books = response.data;
-      const formattedBooks = response.data.map((book) => ({
-        id: book.id,
-        title: book.title,
-        author: book.author,
-      }));
+      // Update list of books with API response
       setBooks(books);
     } catch (error) {
-      return [];
+      // log error to console for further debugging by user if needed
+      console.log(error)
+      // If error retrieving books, let user know and do not update books
+      setMessage({message: "Error retrieving books, please try again", color:"red"})
     }
   };
 
+  // handle book update given a book (input will contain new values, with original id)
   const handleUpdate = async (book) => {
     try {
       const response = await axios.post(
@@ -43,13 +47,16 @@ const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userT
         book,
         { headers: { Authorization: `Bearer ${userToken}` } }
       );
-      console.log(response);
       if (response.status === 200) {
+        // If book successfully updated, refresh list of books
         getBooks({ target: { value: "" } });
       }
     } catch (error) {
-      console.log(error);
-    }
+      // log error to console for further debugging by user if needed
+      console.log(error)
+      // If error updating book, let user know 
+      setMessage({message: "Error updating book, please try again", color:"red"})
+    }    
   };
 
   return (
@@ -69,6 +76,7 @@ const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userT
         </div>
 
         <div style={{ width: "80%", flex: "3" }}>
+          {/* map every book to a new Entry component */}
           {books &&
             books.map((book) => (
               <>
@@ -77,6 +85,7 @@ const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userT
               </>
             ))}
         </div>
+        {/* show error message if any */}
         {message && <h3 style={{color: message.color}}>{message.message}</h3>}
       </div>
     </div>
