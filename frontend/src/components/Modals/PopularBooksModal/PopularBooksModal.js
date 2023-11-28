@@ -8,6 +8,7 @@ import { IoCloseOutline } from "react-icons/io5";
 const BooksModal = ({ setPopularBooksModalShow, userToken }) => {
     // define books and setBooks for future use
     const [books, setBooks] = useState();
+    const [message, setMessage] = useState();
 
     // on load, get top 5 popular books (backend limits to 5)
     useEffect(() => {
@@ -54,6 +55,8 @@ const BooksModal = ({ setPopularBooksModalShow, userToken }) => {
               </>
             ))}
         </div>
+        {/* show error message if any */}
+        {message && <h3 style={{color: message.color}}>{message.message}</h3>}
       </div>
     </div>
   );
