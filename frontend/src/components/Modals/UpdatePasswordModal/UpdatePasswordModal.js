@@ -6,18 +6,23 @@ import * as Yup from "yup";
 import { IoCloseOutline } from "react-icons/io5";
 
 import "./UpdatePasswordModal.css";
+// validation schema created for password input
 const validationSchema = Yup.object().shape({
   password: Yup.string().required("Required").label("Password"),
   repeat_password: Yup.string().required("Required").label("Password"),
 });
+
 const UpdatePasswordModal = ({
   userToken,
   setUserToken,
   setUpdatePasswordModalShow,
 }) => {
+  // message and setmessage created for future use
   const [message, setMessage] = useState();
 
+  // handles submit of new password
   const handleSubmit = async (values) => {
+    // verify passwords match before proceeding with API request
     if (values.password !== values.repeat_password) {
       setMessage({
         message: "Passwords do not match. Please try again.",
@@ -25,14 +30,19 @@ const UpdatePasswordModal = ({
       });
       return null;
     }
+
+    // if all is good, continue with new password
     const new_password = { password: values.password };
     try {
+      // new post request with new password.
       const response = await axios.post(
         "http://127.0.0.1:8000/admins/update",
         new_password,
+        // API uses userToken to verify user to update password for
         { headers: { Authorization: `Bearer ${userToken}` } }
       );
       if (response.status === 200) {
+        // if success, let user know password is updated and log them out after 2 seconds (security)
         setMessage({
           message: "Password updated successfully. You will be logged out now.",
           color: "green",
@@ -40,7 +50,9 @@ const UpdatePasswordModal = ({
         setTimeout(() => setUserToken(null), 2000);
       }
     } catch (error) {
+      // log error to console for further debugging by user if needed
       console.log(error);
+      // If error updating password, let user know 
       setMessage({
         message: "Error updating your password. Please try again later.",
         color: "red",
