@@ -12,6 +12,7 @@ import ReturnBookModal from "../../components/Modals/ReturnBookModal/ReturnBookM
 import BooksModal from "../../components/Modals/BooksModal/BooksModal";
 import LendersModal from "../../components/Modals/LendersModal/LendersModal";
 import TransactionsModal from "../../components/Modals/TransactionsModal/TransactionsModal";
+import PopularBooksModal from "../../components/Modals/PopularBooksModal/PopularBooksModal";
 import CreateBookModal from "../../components/Modals/CreateBookModal/CreateBookModal";
 import CreateLenderModal from "../../components/Modals/CreateLenderModal/CreateLenderModal";
 import UpdatePasswordModal from "../../components/Modals/UpdatePasswordModal/UpdatePasswordModal";
@@ -23,6 +24,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
   const [booksModalShow, setBooksModalShow] = useState(false);
   const [lendersModalShow, setLendersModalShow] = useState(false);
   const [transactionsModalShow, setTransactionsModalShow] = useState(false);
+  const [popularBooksModalShow, setPopularBooksModalShow] = useState(false);
   const [createBookModalShow, setCreateBookModalShow] = useState(false);
   const [createLenderModalShow, setCreateLenderModalShow] = useState(false);
   const [updatePasswordModalShow, setUpdatePasswordModalShow] = useState(false);
@@ -91,6 +93,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
       title: "Most Popular Books",
       value: 5, // Always shows the top 5 most popular books
       color: "chocolate",
+      Modal: setPopularBooksModalShow,
     },
   ];
 
@@ -162,6 +165,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <ReturnBookModal
           userToken={userToken}
           setReturnBookModalShow={setReturnBookModalShow}
+          getNumberOfLoans={getNumberOfLoans}
         />
       )}
       {booksModalShow && (
@@ -180,6 +184,12 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <TransactionsModal
           userToken={userToken}
           setTransactionsModalShow={setTransactionsModalShow}
+        />
+      )}
+      {popularBooksModalShow && (
+        <PopularBooksModal
+          userToken={userToken}
+          setPopularBooksModalShow={setPopularBooksModalShow}
         />
       )}
       {createBookModalShow && (
