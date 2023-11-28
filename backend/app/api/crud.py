@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from .models import Admin, AdminCreate, Book, BookCreate, Lender, LenderCreate, Transaction, TransactionCreate
 
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 from passlib.context import CryptContext
 
@@ -107,16 +107,17 @@ def count_books(db: Session):
     return db.query(Book).count()
 
 def get_all_unavailable_books_by_name(db: Session, title: str, skip: int = 0, limit: int = 10):
-    return db.query(Book).filter(Book.title.ilike(title)).filter(Book.is_available == False).filter(Book.title.ilike(title)).offset(skip).limit(limit).all()
+    return db.query(Book).filter(Book.is_available == False).offset(skip).limit(limit).all()
 
 def count_unavailable_books(db: Session):
     return db.query(Book).filter(Book.is_available == False).count()
 
 def get_most_lent_books(db: Session, limit: int = 5):
     return (
-        db.query(Transaction.book_id, func.count(Transaction.book_id).label("count"))
+        db.query(Book, func.count(Transaction.book_id).label("count"))
+        .join(Transaction, Transaction.book_id == Book.id)
         .filter(Transaction.transaction_type == 1)
-        .group_by(Transaction.book_id)
+        .group_by(Book)
         .order_by(func.count(Transaction.book_id).desc())
         .limit(limit)
         .all()
