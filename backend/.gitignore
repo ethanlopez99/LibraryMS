@@ -2,3 +2,5 @@
 /app/api/__pycache__
 /app/notes.txt
 /app/libraryms.db
+/app/tests/__pycache__
+../venv/
