@@ -1,9 +1,9 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from api import crud, security, models
+from . import crud, security
 from .database import get_db
-from .models import Admin, AdminCreate, Token
+from .models import AdminCreate, Token
 
 router = APIRouter(prefix="/admins")
 
@@ -12,6 +12,12 @@ router = APIRouter(prefix="/admins")
 def get_all_admins(db: Session = Depends(get_db)):
     admins = crud.get_all_admins(db)
     return admins
+
+@router.get("/{admin_id}")
+def get_admin_by_id(admin_id: int, db: Session = Depends(get_db)):
+    admin = crud.get_admin(db, admin_id)
+    return admin
+
 
 # Validate admin credentials and return a token
 @router.post("/login", response_model=Token)
@@ -29,13 +35,16 @@ def count_admins(db: Session = Depends(get_db)):
 def register_admin(admin_data: AdminCreate, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
         raise HTTPException(status_code=401, detail="Not Authorized")
-
+    if admin_data.username == "" or admin_data.password == "":
+        raise HTTPException(status_code=400, detail="Empty username or password")
     admin_data = {'username': admin_data.username, 'password': admin_data.password}
-    admin = crud.create_admin(db, admin_data)
-    if admin:
+    try:
+        admin = crud.create_admin(db, admin_data)
         return admin
-    else:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to create admin")
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e)) # 409 used for Conflict
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 # Update an existing admin
 @router.post("/update")
