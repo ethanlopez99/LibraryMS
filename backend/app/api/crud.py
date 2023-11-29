@@ -1,13 +1,19 @@
 from sqlalchemy.orm import Session
 from .models import Admin, AdminCreate, Book, BookCreate, Lender, LenderCreate, Transaction, TransactionCreate
 
-from sqlalchemy import func, and_
+from sqlalchemy import func
 
 from passlib.context import CryptContext
 
 # ===== ADMIN CRUD FUNCTIONS ===== #
 
 def create_admin(db: Session, admin_data: AdminCreate):
+    # Check if the username already exists
+    existing_admin = db.query(Admin).filter(Admin.username == admin_data['username']).first()
+
+    if existing_admin:
+        # Raise an exception or return a specific value to indicate the failure
+        raise ValueError(f"Username '{admin_data['username']}' is already in use.")
     # New admin data created as Admin object. Uses "hash_password" to hash the password and store it encrypted in the db
     db_admin = Admin(username=admin_data['username'], password=hash_password(admin_data['password']))
     # Object added to DB
