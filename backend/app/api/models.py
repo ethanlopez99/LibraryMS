@@ -24,6 +24,7 @@ class Book(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(96), unique=True, index=True) # Max length calculated at 5 words title + 7 words subtitle, each word 8 letters
+    genre = Column(String(20))
     author = Column(String(50))
     is_available = Column(Boolean, default=True)
     lender_id = Column(Integer, ForeignKey('lenders.id'))
@@ -35,6 +36,7 @@ class Book(Base):
 class BookCreate(BaseModel):
     title: str
     author: str
+    genre: str
 
 
 # Lender object created as a table in database. Each lender object can have multiple books.
