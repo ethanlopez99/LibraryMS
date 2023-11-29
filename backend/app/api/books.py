@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 from . import crud, security
 from .database import get_db
 from .models import Book, BookCreate, Token
+from .validation import validate_title, validate_author
+from .errors import ErrorMessages
 
 router = APIRouter(prefix="/books")
 
@@ -61,6 +63,13 @@ def get_popular_books(db: Session = Depends(get_db), limit: int = 10):
 def create_new_book(book_data: BookCreate, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
         raise HTTPException(status_code=401, detail="Not Authorized")
+    
+    try:
+        validate_title(book_data.title)
+        validate_author(book_data.author)
+    except HTTPException as e:
+        raise e
+
     new_book_data = {'title': book_data.title, 'author': book_data.author}
     book = crud.new_book(db=db, book_data=new_book_data)
     if book:
@@ -73,6 +82,26 @@ def create_new_book(book_data: BookCreate, db: Session = Depends(get_db), token:
 def update_book(new_book_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
         raise HTTPException(status_code=401, detail="Not Authorized")
+    
+    if "id" not in new_book_data:
+        raise ErrorMessages.BOOK_ID_MISSING
+    
+    try:
+        validate_title(new_book_data['title'])
+    except HTTPException as e:
+        raise e
+    except KeyError as e:
+        raise ErrorMessages.TITLE_MISSING
+    
+    try:
+        validate_author(new_book_data['author'])
+    except HTTPException as e:
+        raise e
+    except KeyError as e:
+        raise ErrorMessages.TITLE_MISSING
+    
+    new_book_data = {"id": new_book_data['id'], "title":new_book_data['title'], "author":new_book_data['author']}
+    
     db_book = crud.update_book(update_data=new_book_data, db=db)
     if db_book:
         return db_book

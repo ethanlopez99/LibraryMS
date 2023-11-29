@@ -25,3 +25,25 @@ def validate_password(password):
         raise ErrorMessages.MINIMUM_PASSWORD_LENGTH_SUBCEEDED
     elif " " in password:
         raise ErrorMessages.PASSWORD_SPACE
+    
+def validate_title(title):
+    if title.strip() == "":
+        raise ErrorMessages.EMPTY_TITLE
+    elif len(title.strip()) > 96:
+        raise ErrorMessages.MAXIMUM_TITLE_LENGTH_EXCEEDED
+
+    disallowed_chars = re.compile(r'[\'"<>@#$%^&*+=\[\]{}/\\;`]')
+
+    if disallowed_chars.search(title.strip()):
+        raise ErrorMessages.TITLE_SPECIAL_CHARACTERS
+    
+def validate_author(author):
+    if author.strip() == "":
+        raise ErrorMessages.EMPTY_AUTHOR
+    elif len(author.strip()) > 96:
+        raise ErrorMessages.MAXIMUM_AUTHOR_LENGTH_EXCEEDED
+
+    disallowed_chars = re.compile(r'[\'"<>@#$%^&*+=\[\]{}/\\;`]')
+
+    if disallowed_chars.search(author):
+        raise ErrorMessages.AUTHOR_SPECIAL_CHARACTERS

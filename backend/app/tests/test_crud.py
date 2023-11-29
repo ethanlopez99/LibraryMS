@@ -173,6 +173,24 @@ def test_create_new_book():
     assert created_book["title"] == book_data["title"]
     assert created_book["author"] == book_data["author"]
 
+def test_create_book_empty_title():
+    # create book with empty title
+    response = client.post(
+        "/books/new",
+        json={"title": "", "author": "Test Author"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_book_no_title():
+    # create book with empty title
+    response = client.post(
+        "/books/new",
+        json={"author": "Test Author"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
 def test_create_book_long_title():
     # create book with title > 96 chars
     response = client.post(
@@ -183,7 +201,7 @@ def test_create_book_long_title():
     assert response.status_code == 422, response.text
 
 def test_create_book_long_author():
-    # create book with author > 96 chars
+    # create book with author > 50 chars
     response = client.post(
         "/books/new",
         json={"title": "Test Book 1", "author": "Test AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest Author"},
@@ -195,19 +213,69 @@ def test_create_book_special_chars_title():
     # create book with special chars in title
     response = client.post(
         "/books/new",
-        json={"title": "Test\{\}Book 1", "author": "Test Author"},
+        json={"title": "Test&Book 1", "author": "Test Author"},
         headers={"Authorization": f"Bearer {test_token}"}
     )
     assert response.status_code == 422, response.text
 
-def test_create_book_special_chars_author():
+def test_update_book():
     # create book with special chars in author
     response = client.post(
-        "/books/new",
-        json={"title": "Test Book 1", "author": "Test\{\} Author"},
+        "/books/update",
+        json={"id": "1","title": "Test Book Updated", "author": "Test Author Updated"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 200
+    updated_book = response.json()
+    assert updated_book["title"] == "Test Book Updated"
+    assert updated_book["author"] == "Test Author Updated"
+
+
+def test_update_book_empty_title():
+    # update book with empty title
+    response = client.post(
+        "/books/update",
+        json={"id":"1", "title": "", "author": "Test Author"},
         headers={"Authorization": f"Bearer {test_token}"}
     )
     assert response.status_code == 422, response.text
+
+def test_update_book_no_title():
+    # update book with empty title
+    response = client.post(
+        "/books/update",
+        json={"id": "1", "author": "Test Author"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_update_book_long_title():
+    # update book with title > 96 chars
+    response = client.post(
+        "/books/update",
+        json={"id":"1", "title": "testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1", "author": "Test Author"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_update_book_long_author():
+    # update book with author > 50 chars
+    response = client.post(
+        "/books/update",
+        json={"id":"1", "title": "Test Book 1", "author": "Test AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest Author"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_update_book_special_chars_title():
+    # update book with special chars in title
+    response = client.post(
+        "/books/update",
+        json={"id":"1", "title": "Test&Book 1", "author": "Test Author"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
 
 def test_create_new_lender():
     # Test creating a new lender
