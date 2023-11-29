@@ -18,4 +18,13 @@ class ErrorMessages:
 
     INVALID_TOKEN = HTTPException(status_code=401, detail=" The server could not verify the provided JWT (JSON Web Token) token. The token may be expired, invalid, or there is an issue with the signature.")
 
-    
+    EMPTY_TITLE = HTTPException(status_code=422, detail="Title is empty")
+    EMPTY_AUTHOR = HTTPException(status_code=422, detail="Author is empty")
+    MAXIMUM_TITLE_LENGTH_EXCEEDED = HTTPException(status_code=422, detail="Title exceeds maximum length of 96 characters")
+    MAXIMUM_AUTHOR_LENGTH_EXCEEDED = HTTPException(status_code=422, detail="Author exceeds maximum length of 50 characters")
+    TITLE_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Title cannot contain special characters")
+    AUTHOR_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Author cannot contain special characters")
+    TITLE_MISSING = HTTPException(status_code=422, detail="Title is missing from request")
+    AUTHOR_MISSING = HTTPException(status_code=422, detail="Author is missing from request")
+    BOOK_ID_MISSING = HTTPException(status_code=422, detail="ID is missing from request")
+
