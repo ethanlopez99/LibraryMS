@@ -1,0 +1,15 @@
+from fastapi import  HTTPException
+
+class ErrorMessages:
+    EMPTY_USERNAME = HTTPException(status_code=422, detail="Username is empty")
+    EMPTY_PASSWORD = HTTPException(status_code=422, detail="Password is empty")
+    MAXIMUM_USERNAME_LENGTH_EXCEEDED = HTTPException(status_code=422, detail="Username exceeds maximum length of 32 characters")
+    MAXIMUM_PASSWORD_LENGTH_EXCEEDED = HTTPException(status_code=422, detail="Password exceeds maximum length of 32 characters")
+    MINIMUM_USERNAME_LENGTH_SUBCEEDED = HTTPException(status_code=422, detail="Username does not meet minimum length of 8 characters")
+    MINIMUM_PASSWORD_LENGTH_SUBCEEDED = HTTPException(status_code=422, detail="Password does not meet minimum length of 8 characters")
+    USERNAME_SPACE = HTTPException(status_code=422, detail="Username cannot have spaces")
+    PASSWORD_SPACE = HTTPException(status_code=422, detail="Password cannot have spaces")
+    USERNAME_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Username cannot contain special characters")
+
+
+    ALREADY_EXISTING_ADMIN = ValueError(f"Username '{admin_data['username']}' is already in use.")

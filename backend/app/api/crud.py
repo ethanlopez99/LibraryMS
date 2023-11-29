@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from .models import Admin, AdminCreate, Book, BookCreate, Lender, LenderCreate, Transaction, TransactionCreate
-
-from sqlalchemy import func
+from .errors import ErrorMessages
+from sqlalchemy import func, or_
 
 from passlib.context import CryptContext
 
@@ -13,7 +13,7 @@ def create_admin(db: Session, admin_data: AdminCreate):
 
     if existing_admin:
         # Raise an exception or return a specific value to indicate the failure
-        raise ValueError(f"Username '{admin_data['username']}' is already in use.")
+        raise ErrorMessages.ALREADY_EXISTING_ADMIN
     # New admin data created as Admin object. Uses "hash_password" to hash the password and store it encrypted in the db
     db_admin = Admin(username=admin_data['username'], password=hash_password(admin_data['password']))
     # Object added to DB
@@ -122,7 +122,9 @@ def get_all_books(db: Session, skip: int = 0, limit: int = 10):
 
 def search_books_by_name(db: Session, book_name: str, skip: int = 0, limit: int = 10):
     # Search books based off title
-    return db.query(Book).filter(Book.title.ilike(book_name)).offset(skip).limit(limit).all()
+    return db.query(Book).filter(or_(Book.title.ilike(book_name),(Book.author.ilike(book_name)))).offset(skip).limit(limit).all()
+
+
 
 def new_book(db: Session, book_data: BookCreate):
     # New book data stored as Book object

@@ -45,6 +45,7 @@ def test_login(username = "root", password="root"):
     
 
 def test_create_admin():
+    # Standard admin creation
     response = client.post(
         "/admins/register",
         json={"username": "testuser1", "password": "testpassword1"},
@@ -56,12 +57,95 @@ def test_create_admin():
     assert "id" in data
     admin_id = data["id"]
     
+    # Admin creation verification
     response = client.get(f"/admins/{admin_id}")
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["id"] == admin_id
     test_login(username="testuser1",password="testpassword1") # For updating password test
 
+def test_create_admin_empty_password():
+    # Create admin with empty password
+    response = client.post(
+        "/admins/register",
+        json={"username": "testuser1", "password": ""},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_admin_empty_username():
+    # Create admin with empty username
+    response = client.post(
+        "/admins/register",
+        json={"username": "", "password": "testpassword1"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_admin_long_username():
+    # Create admin with username > 32 characters
+    response = client.post(
+        "/admins/register",
+        json={"username": "testusername1testusername1testusername1", "password": "testpassword1"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_admin_long_password():
+    # Create admin with password > 32 characters
+    response = client.post(
+        "/admins/register",
+        json={"username": "testusername1", "password": "testpassword1testpassword1testpassword1testpassword1"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_admin_short_username():
+    # Create admin with username < 8 characters
+    response = client.post(
+        "/admins/register",
+        json={"username": "test1", "password": "testpassword1"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_admin_short_password():
+    # Create admin with password < 8 characters
+    response = client.post(
+        "/admins/register",
+        json={"username": "testusername1", "password": "test1"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_admin_space_username():
+    # Create admin with space in username
+    response = client.post(
+        "/admins/register",
+        json={"username": "test user", "password": "testpassword1"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_admin_space_password():
+    # Create admin with space in password
+    response = client.post(
+        "/admins/register",
+        json={"username": "testusername1", "password": "test password"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_admin_special_chars():
+    # Create admin with special characters in username
+    response = client.post(
+        "/admins/register",
+        json={"username": "test&user", "password": "testpassword1"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+    
 def test_create_duplicate_admin():
     response = client.post(
         "/admins/register",
@@ -70,13 +154,6 @@ def test_create_duplicate_admin():
     )
     assert response.status_code == 409, response.text
 
-def test_create_admin_with_empty_password():
-    response = client.post(
-        "/admins/register",
-        json={"username": "testuser1", "password": ""},
-        headers={"Authorization": f"Bearer {test_token}"}
-    )
-    assert response.status_code == 400, response.text
 
 
 def test_create_new_book():

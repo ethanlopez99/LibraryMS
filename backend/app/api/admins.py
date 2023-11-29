@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from . import crud, security
 from .database import get_db
 from .models import AdminCreate, Token
+from .validation import validate_username, validate_password
 
 router = APIRouter(prefix="/admins")
 
@@ -35,9 +36,15 @@ def count_admins(db: Session = Depends(get_db)):
 def register_admin(admin_data: AdminCreate, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
         raise HTTPException(status_code=401, detail="Not Authorized")
-    if admin_data.username == "" or admin_data.password == "":
-        raise HTTPException(status_code=400, detail="Empty username or password")
+    
+    try:
+        validate_username(admin_data.username)
+        validate_password(admin_data.password)
+    except HTTPException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e.detail))
+
     admin_data = {'username': admin_data.username, 'password': admin_data.password}
+
     try:
         admin = crud.create_admin(db, admin_data)
         return admin
@@ -52,6 +59,11 @@ def update_admin(new_admin_data: dict, db: Session = Depends(get_db), token: dic
     if "sub" not in token:
         raise HTTPException(status_code=401, detail="Not Authorized")
     # admin id extracted from token
+    try:
+        validate_password(new_admin_data['password'])
+    except HTTPException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e.detail))
+    
     db_admin = crud.update_admin(admin_id=token['id'], update_data=new_admin_data, db=db)
     if db_admin:
         return db_admin
