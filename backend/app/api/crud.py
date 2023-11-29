@@ -58,6 +58,11 @@ def update_admin(db: Session, admin_id: int, update_data: dict):
     # If admin not found, return None
     return None
 
+def delete_admins(db: Session):
+    db.query(Admin).delete()
+    db.commit()
+
+
 # Create password context
 pw_context = CryptContext(schemes=["bcrypt"])
 
