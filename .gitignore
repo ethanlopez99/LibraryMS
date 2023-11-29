@@ -1,8 +1,6 @@
 
 venv/
 backend/alembic/__pycache__/env.cpython-311.pyc
-backend/alembic/versions/__pycache__/4ae3d15e5d52_added_genre_column_to_book_second_.cpython-311.pyc
-backend/alembic/versions/__pycache__/9a4aa1dca3db_first_migration.cpython-311.pyc
-backend/alembic/versions/__pycache__/87bad795f4c9_added_genre_column_to_book.cpython-311.pyc
+backend/alembic/versions/__pycache__
 backend/app/tests/libraryms.db
 backend/app/tests/test.db
