@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-import databases
-from api import models, admins, transactions, books, lenders
-from api.database import Base, engine
+from .api import admins, transactions, books, lenders
+from .api.database import Base, engine
 
 app = FastAPI()
 
