@@ -48,8 +48,8 @@ def register_admin(admin_data: AdminCreate, db: Session = Depends(get_db), token
     try:
         admin = crud.create_admin(db, admin_data)
         return admin
-    except ValueError as e:
-        raise HTTPException(status_code=409, detail=str(e)) # 409 used for Conflict
+    except HTTPException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e.detail))
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 

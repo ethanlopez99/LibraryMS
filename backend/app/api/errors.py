@@ -12,4 +12,4 @@ class ErrorMessages:
     USERNAME_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Username cannot contain special characters")
 
 
-    ALREADY_EXISTING_ADMIN = ValueError(f"Username '{admin_data['username']}' is already in use.")
+    ALREADY_EXISTING_ADMIN = HTTPException(status_code=409, detail="Username is already in use.") # 409 used for conflict
