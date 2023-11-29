@@ -105,6 +105,9 @@ def new_transaction(db: Session, transaction_data: TransactionCreate):
 def get_transactions(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Transaction).offset(skip).limit(limit).all()
 
+# Drop Transactions table
+def delete_transactions(db: Session):
+    db.query(Transaction).delete()
 
 # ===== BOOKS CRUD FUNCTIONS ===== #
 
@@ -175,6 +178,10 @@ def get_most_lent_books(db: Session, limit: int = 5):
         .all()
     )
 
+# Drop Books table
+def delete_books(db: Session):
+    db.query(Book).delete()
+
 # ===== LENDERS CRUD FUNCTIONS ===== #
 
 def get_all_lenders(db: Session, skip: int = 0, limit: int = 10):
@@ -213,3 +220,7 @@ def update_lender(db: Session, lender_id: int, update_data: dict):
         return db_lender
     # if lender not found, return None
     return None
+
+# Drop Lenders table
+def delete_lenders(db: Session):
+    db.query(Lender).delete()
