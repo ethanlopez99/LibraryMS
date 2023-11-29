@@ -166,7 +166,7 @@ def test_update_admin_password():
 
 def test_create_new_book():
     # standard new book request
-    book_data = {"title": "Test Book", "author": "Test Author"}
+    book_data = {"title": "Test Book", "author": "Test Author", "genre": "Test Genre"}
     response = client.post("/books/new", json=book_data, headers={"Authorization": f"Bearer {test_token}"})
     assert response.status_code == 200
     created_book = response.json()
