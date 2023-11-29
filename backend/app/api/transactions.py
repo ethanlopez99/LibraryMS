@@ -19,6 +19,14 @@ def new_transaction(transaction: TransactionCreate, db: Session = Depends(get_db
     
     raise HTTPException(status_code=422, detail="Request could not be completed, please ensure you're selecting the correct book and correct lender")
 
+# Delete all transactions
+@router.get("/removeall")
+def remove_all_transactions(db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
+    if "sub" not in token:
+        raise HTTPException(status_code=401, detail="Not Authorized")
+    crud.delete_books(db=db)
+    return {"message": "All transactions deleted"}
+
 @router.get("/")
 def get_transactions(skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:

@@ -107,7 +107,12 @@ def get_transactions(db: Session, skip: int = 0, limit: int = 10):
 
 # Drop Transactions table
 def delete_transactions(db: Session):
+    db.query(Book).update({"is_available": True})
+    db.commit()
+    db.refresh()
     db.query(Transaction).delete()
+    db.commit()
+    db.refresh()
 
 # ===== BOOKS CRUD FUNCTIONS ===== #
 
@@ -181,6 +186,9 @@ def get_most_lent_books(db: Session, limit: int = 5):
 # Drop Books table
 def delete_books(db: Session):
     db.query(Book).delete()
+    db.commit()
+    db.refresh()
+
 
 # ===== LENDERS CRUD FUNCTIONS ===== #
 
@@ -224,3 +232,5 @@ def update_lender(db: Session, lender_id: int, update_data: dict):
 # Drop Lenders table
 def delete_lenders(db: Session):
     db.query(Lender).delete()
+    db.commit()
+    db.refresh()
