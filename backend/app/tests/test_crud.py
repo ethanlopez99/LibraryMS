@@ -33,7 +33,7 @@ client = TestClient(app)
 
 test_token = ""
 
-def test_login(username = "root", password="root"):
+def test_login(username = "userroot", password="passwordroot"):
     global test_token
     response = client.post(
         "/admins/login",
@@ -147,30 +147,13 @@ def test_create_admin_special_chars():
 
     
 def test_create_duplicate_admin():
+    # create admin with same username as already exists
     response = client.post(
         "/admins/register",
         json={"username": "testuser1", "password": "testpassword2"},
         headers={"Authorization": f"Bearer {test_token}"}
     )
     assert response.status_code == 409, response.text
-
-
-
-def test_create_new_book():
-    book_data = {"title": "Test Book", "author": "Test Author"}
-    response = client.post("/books/new", json=book_data, headers={"Authorization": f"Bearer {test_token}"})
-    assert response.status_code == 200
-    created_book = response.json()
-    assert created_book["title"] == book_data["title"]
-    assert created_book["author"] == book_data["author"]
-
-def test_create_new_lender():
-    # Test creating a new lender
-    lender_data = {"lender_name": "Test Lender"}
-    response = client.post("/lenders/new", json=lender_data, headers={"Authorization": f"Bearer {test_token}"})
-    assert response.status_code == 200
-    created_lender = response.json()
-    assert created_lender["lender_name"] == lender_data["lender_name"]
 
 def test_update_admin_password():
     # new_token = test_create_admin()
@@ -180,6 +163,60 @@ def test_update_admin_password():
     updated_admin = response.json()
     assert "id" in updated_admin
     assert "username" in updated_admin
+
+def test_create_new_book():
+    # standard new book request
+    book_data = {"title": "Test Book", "author": "Test Author"}
+    response = client.post("/books/new", json=book_data, headers={"Authorization": f"Bearer {test_token}"})
+    assert response.status_code == 200
+    created_book = response.json()
+    assert created_book["title"] == book_data["title"]
+    assert created_book["author"] == book_data["author"]
+
+def test_create_book_long_title():
+    # create book with title > 96 chars
+    response = client.post(
+        "/books/new",
+        json={"title": "testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1", "author": "Test Author"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_book_long_author():
+    # create book with author > 96 chars
+    response = client.post(
+        "/books/new",
+        json={"title": "Test Book 1", "author": "Test AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest AuthorTest Author"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_book_special_chars_title():
+    # create book with special chars in title
+    response = client.post(
+        "/books/new",
+        json={"title": "Test\{\}Book 1", "author": "Test Author"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_book_special_chars_author():
+    # create book with special chars in author
+    response = client.post(
+        "/books/new",
+        json={"title": "Test Book 1", "author": "Test\{\} Author"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_new_lender():
+    # Test creating a new lender
+    lender_data = {"lender_name": "Test Lender"}
+    response = client.post("/lenders/new", json=lender_data, headers={"Authorization": f"Bearer {test_token}"})
+    assert response.status_code == 200
+    created_lender = response.json()
+    assert created_lender["lender_name"] == lender_data["lender_name"]
+
 
 if __name__ == '__main__':
     unittest.main()
