@@ -41,7 +41,7 @@ def register_admin(admin_data: AdminCreate, db: Session = Depends(get_db), token
         validate_username(admin_data.username)
         validate_password(admin_data.password)
     except HTTPException as e:
-        raise HTTPException(status_code=e.status_code, detail=str(e.detail))
+        raise e
 
     admin_data = {'username': admin_data.username, 'password': admin_data.password}
 
@@ -69,3 +69,11 @@ def update_admin(new_admin_data: dict, db: Session = Depends(get_db), token: dic
         return db_admin
     else:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update admin")
+
+# Delete all admins
+@router.delete("/removeall")
+def remove_all_admins(db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
+    if "sub" not in token:
+        raise HTTPException(status_code=401, detail="Not Authorized")
+    crud.delete_admins(db=db)
+    return {"message": "All admins deleted"}

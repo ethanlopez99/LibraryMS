@@ -12,4 +12,10 @@ class ErrorMessages:
     USERNAME_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Username cannot contain special characters")
 
 
-    ALREADY_EXISTING_ADMIN = HTTPException(status_code=409, detail="Username is already in use.") # 409 used for conflict
+    ALREADY_EXISTING_ADMIN = HTTPException(status_code=409, detail="Username is already in use") # 409 used for conflict
+
+    INVALID_LOGIN_CREDS = HTTPException(status_code=401, detail="Username or password incorrect")
+
+    INVALID_TOKEN = HTTPException(status_code=401, detail=" The server could not verify the provided JWT (JSON Web Token) token. The token may be expired, invalid, or there is an issue with the signature.")
+
+    
