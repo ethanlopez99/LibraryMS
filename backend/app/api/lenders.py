@@ -60,7 +60,7 @@ def create_new_lender(lender_data: LenderCreate, db: Session = Depends(get_db), 
 
 # Update a lender
 @router.post("/update")
-def update_lender(lender_id: int, new_lender_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
+def update_lender(new_lender_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
         raise ErrorMessages.NOT_AUTHORIZED
 
@@ -71,7 +71,7 @@ def update_lender(lender_id: int, new_lender_data: dict, db: Session = Depends(g
     except KeyError:
         raise ErrorMessages.LENDER_NAME_MISSING
 
-    db_lender = crud.update_lender(lender_id=lender_id, update_data=new_lender_data, db=db)
+    db_lender = crud.update_lender(update_data=new_lender_data, db=db)
     if db_lender:
         return db_lender
     else:
