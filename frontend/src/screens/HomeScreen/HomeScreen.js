@@ -97,6 +97,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
       title: "Admins",
       value: numberOfAdmins,
       color: "red",
+      Modal: (input) => console.log(input),
     },
     {
       Icon: FaChartBar,
@@ -192,6 +193,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <LendersModal
           userToken={userToken}
           setLendersModalShow={setLendersModalShow}
+          count={numberOfLenders}
         />
       )}
       {transactionsModalShow && (
