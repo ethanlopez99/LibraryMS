@@ -16,17 +16,21 @@ const CreateBookModal = ({
   // define message for future use
   const [message, setMessage] = useState(false);
 
-
   // new validation schema for formik form
   const validationSchema = Yup.object().shape({
     book_name: Yup.string().required("Required").label("Book Name"),
     author: Yup.string().required("Required").label("Author"),
+    genre: Yup.string().required("Required").label("Genre"),
   });
 
   // handles submit of new book
   const handleSubmit = async (values, { resetForm }) => {
     // New book values are stored in dictionary suitable for API request
-    const new_book = { title: values.book_name, author: values.author };
+    const new_book = {
+      title: values.book_name,
+      author: values.author,
+      genre: values.genre,
+    };
     try {
       // post request is made to API endpoint
       const response = await axios.post(
@@ -44,8 +48,9 @@ const CreateBookModal = ({
       });
     } catch (error) {
       // if error, let user know there was an issue with creation of book
+      console.error(error);
       setMessage({
-        message: "Unable to create book. Please try again",
+        message: error.response.data.detail,
         color: "red",
       });
     }
@@ -63,7 +68,7 @@ const CreateBookModal = ({
         </div>
         <h1>Create New Book</h1>
         <Formik
-          initialValues={{ book_name: "", author: "" }}
+          initialValues={{ book_name: "", author: "", genre: "" }}
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
@@ -89,6 +94,17 @@ const CreateBookModal = ({
               />
               {/* error message shown if input does not follow validation */}
               <ErrorMessage name="author" component="div" />
+            </div>
+            <div className="app_login-form_field_container">
+              <Field
+                type="text"
+                id="genre"
+                name="genre"
+                placeholder="Genre"
+                className="app_login-form_input_field"
+              />
+              {/* error message shown if input does not follow validation */}
+              <ErrorMessage name="genre" component="div" />
             </div>
             <button type="submit" className="app_login-form_submit">
               Create New Book
