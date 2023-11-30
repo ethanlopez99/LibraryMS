@@ -14,7 +14,7 @@ router = APIRouter(prefix="/lenders")
 @router.get("/")
 def get_all_lenders(db: Session = Depends(get_db), skip: int = 0, limit: int = 10, token: dict = Depends(security.verify_token)):
     if "sub" not in token:
-        raise ErrorMessages.INVALID_TOKEN
+        raise ErrorMessages.NOT_AUTHORIZED
     lenders = crud.get_all_lenders(db=db, skip=skip, limit=limit)
     return lenders
 
