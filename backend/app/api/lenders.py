@@ -63,7 +63,8 @@ def create_new_lender(lender_data: LenderCreate, db: Session = Depends(get_db), 
 def update_lender(new_lender_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
         raise ErrorMessages.NOT_AUTHORIZED
-
+    if "id" not in new_lender_data:
+        raise ErrorMessages.LENDER_ID_MISSING
     try:
         validate_lender_name(new_lender_data['lender_name'])
     except HTTPException as e:

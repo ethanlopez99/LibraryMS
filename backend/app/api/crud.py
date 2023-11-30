@@ -223,11 +223,11 @@ def new_lender(db: Session, lender_data: LenderCreate):
 
 def update_lender(db: Session, update_data: dict):
     # finds lender based on lender id
-    db_lender = db.query(Lender).filter(Lender.id == update_data['lender_id']).first()
+    db_lender = db.query(Lender).filter(Lender.id == update_data['id']).first()
     if db_lender:
         # if lender exists, update based on update_data
         for key, value in update_data.items():
-            if key == "lender_id":
+            if key == "id":
                 next
             setattr(db_lender, key, value)
         # commit and refresh
