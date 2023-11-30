@@ -109,7 +109,7 @@ def update_book(new_book_data: dict, db: Session = Depends(get_db), token: dict 
     except KeyError:
         raise ErrorMessages.GENRE_MISSING
     
-    new_book_data = {"id": new_book_data['id'], "title":new_book_data['title'], "author":new_book_data['author']}
+    new_book_data = {"id": new_book_data['id'], "title":new_book_data['title'], "author":new_book_data['author'], "genre":new_book_data['genre']}
     
     db_book = crud.update_book(update_data=new_book_data, db=db)
     if db_book:
