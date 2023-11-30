@@ -4,24 +4,26 @@ import axios from "axios";
 import "./LendersModal.css";
 import Entry from "../../Entry/Entry";
 
+import Pagination from "@mui/material/Pagination";
 import { IoCloseOutline } from "react-icons/io5";
 
 // Lenders modal defined
-const LendersModal = ({ setLendersModalShow, userToken }) => {
+const LendersModal = ({ setLendersModalShow, userToken, count }) => {
   const [lenders, setLenders] = useState();
+  const [page, setPage] = useState(1);
   const [message, setMessage] = useState();
 
   // on load, get all lenders (backend will limit to 10)
   useEffect(() => {
-    getLenders({ target: { value: "" } });
+    getLenders({ target: { value: "" }, skip: page * 10 - 10 });
   }, []);
 
   // get all lenders from API. Using "event" as input here to match input component's syntax
-  const getLenders = async (event) => {
+  const getLenders = async ({ target, skip }) => {
     try {
       // make get request to api for lenders matching name
       const response = await axios.get(
-        `http://127.0.0.1:8000/lenders/search?lender_name=%${event.target.value}%`,
+        `http://127.0.0.1:8000/lenders/search?lender_name=%${target.value}%&skip=${skip}`,
         { headers: { Authorization: `Bearer ${userToken}` } }
       );
 
@@ -31,9 +33,12 @@ const LendersModal = ({ setLendersModalShow, userToken }) => {
       setLenders(lenders);
     } catch (error) {
       // log error to console for further debugging by user if needed
-      console.log(error)
+      console.log(error);
       // If error retrieving lenders, let user know
-      setMessage({message: "Error retrieving lenders, please try again", color:"red"})
+      setMessage({
+        message: "Error retrieving lenders, please try again",
+        color: "red",
+      });
     }
   };
 
@@ -47,14 +52,23 @@ const LendersModal = ({ setLendersModalShow, userToken }) => {
       );
       if (response.status === 200) {
         // if post request response is ok, lenders list is updated
-        getLenders({ target: { value: "" } });
+        getLenders({ target: { value: "" }, skip: page * 10 - 10 });
       }
     } catch (error) {
       // log error to console for further debugging by user if needed
-      console.log(error)
-      // If error updating lender, let user know 
-      setMessage({message: "Error updating book, please try again", color:"red"})
-    }    
+      console.log(error);
+      // If error updating lender, let user know
+      setMessage({
+        message: error.response.data.detail,
+        color: "red",
+      });
+    }
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+    getLenders({ target: { value: "" }, skip: value * 10 - 10 });
+    setMessage();
   };
 
   return (
@@ -78,13 +92,18 @@ const LendersModal = ({ setLendersModalShow, userToken }) => {
           {lenders &&
             lenders.map((lender) => (
               <>
-                <Entry lender={lender} handleUpdate={handleUpdate} setErrorMessage={setMessage}/>
+                <Entry
+                  lender={lender}
+                  handleUpdate={handleUpdate}
+                  setErrorMessage={setMessage}
+                />
                 <div style={{ height: "2px", background: "lightgrey" }} />
               </>
             ))}
         </div>
+        <Pagination count={Math.ceil(count / 10)} onChange={handlePageChange} />
         {/* show error message if any */}
-        {message && <h3 style={{color: message.color}}>{message.message}</h3>}
+        {message && <h3 style={{ color: message.color }}>{message.message}</h3>}
       </div>
     </div>
   );
