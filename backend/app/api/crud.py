@@ -80,18 +80,20 @@ def new_transaction(db: Session, transaction_data: TransactionCreate):
     # check if book is available, to find out if transaction type requested is possible
     available = is_book_available(db, db_transaction.book_id)
     if (available == False and db_transaction.transaction_type == 1):
-        return None # Cannot loan a book if not available
+        raise ErrorMessages.BOOK_NOT_AVAILABLE_TO_LOAN # Cannot loan a book if not available
     elif (available == True and db_transaction.transaction_type == 0):
-        return None # Cannot return a book if it has not been loaned
+        return ErrorMessages.BOOK_NOT_AVAILABLE_TO_RETURN # Cannot return a book if it has not been loaned
     
     # Find book to update is_available
     book = db.query(Book).filter(Book.id == transaction_data['book_id'])
+    if not book:
+        raise ErrorMessages.BOOK_NOT_FOUND
     # Find lender id of book, if exists
     book_lender_id = db.query(Book.lender_id).filter(Book.id == transaction_data['book_id']).all()[0].lender_id
 
     # If returning, and input lender_id does not match lender_id in database, return none
     if (db_transaction.transaction_type == 0 and not book_lender_id == db_transaction.lender_id):
-        return None # Lender ID must match to be able to return book
+        raise ErrorMessages.RETURNING_LENDER_MISMATCH # Lender ID must match to be able to return book
     
     # Add new transaction to database, and commit changes and refresh
     db.add(db_transaction)
@@ -133,7 +135,7 @@ def search_books_by_name(db: Session, book_name: str, skip: int = 0, limit: int 
 
 def new_book(db: Session, book_data: BookCreate):
     # New book data stored as Book object
-    new_book_data = Book(title=book_data['title'], author=book_data['author'])
+    new_book_data = Book(title=book_data['title'], author=book_data['author'], genre=book_data['genre'])
     # Add new book data, commit and refresh
     db.add(new_book_data)
     db.commit()
@@ -149,6 +151,8 @@ def is_book_available(db: Session, book_id: int):
 def update_book(db: Session, update_data: dict):
     # Find book to update based on input book_id
     db_book = db.query(Book).filter(Book.id == update_data['id']).first()
+    if not db_book:
+        raise ErrorMessages.BOOK_NOT_FOUND
     # if book exists, iterate through each item in update_data
     if db_book:
         for key, value in update_data.items():
