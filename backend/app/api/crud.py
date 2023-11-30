@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from .models import Admin, AdminCreate, Book, BookCreate, Lender, LenderCreate, Transaction, TransactionCreate
 from .errors import ErrorMessages
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, and_
 
 from passlib.context import CryptContext
 
@@ -166,9 +166,16 @@ def count_books(db: Session):
     # returns count of all rows in Book
     return db.query(Book).count()
 
+def count_books_by_name(title: str, db: Session, unavailable: bool = False):
+    # returns count of all rows in Book matching the input
+    if not unavailable:
+        return db.query(Book).filter(or_(Book.title.ilike(title),(Book.author.ilike(title)))).count()
+    else:
+        return db.query(Book).filter(and_((Book.is_available == False),or_(Book.title.ilike(title),(Book.author.ilike(title))))).count()
+
 def get_all_unavailable_books_by_name(db: Session, title: str, skip: int = 0, limit: int = 10):
     # Returns books based off availability
-    return db.query(Book).filter(Book.is_available == False).offset(skip).limit(limit).all()
+    return db.query(Book).filter(and_(Book.is_available == False),(Book.title.ilike(title))).offset(skip).limit(limit).all()
 
 def count_unavailable_books(db: Session):
     # Counts unavailable books
