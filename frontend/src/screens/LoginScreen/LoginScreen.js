@@ -37,13 +37,10 @@ const LoginScreen = ({ setUserToken }) => {
         setErrorMessage(null);
       }
     } catch (error) {
-      // Handle authentication error, 401 if not authorised
-      if (error.response.status === 401) {
-        // Set error message
-        setErrorMessage("Incorrect username or password, please try again");
-      }
+      // Set error message
+      setErrorMessage(error.response.data.detail);
       // Log error message to console for further information
-      console.error(error.message);
+      console.error(error);
     }
   };
 
@@ -79,9 +76,7 @@ const LoginScreen = ({ setUserToken }) => {
               />
             </div>
             {/* Error message is shown if it has been set by the login function */}
-            {errorMessage && (
-              <div style={{ color: "red" }}>Incorrect username or Password</div>
-            )}
+            {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
             <button type="submit" className="app_login-form_submit">
               Login
             </button>
