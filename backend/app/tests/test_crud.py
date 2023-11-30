@@ -1,11 +1,12 @@
 import unittest
+
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
-from ..main import app
-from ..api.database import Base, get_db
 
+from ..api.database import Base, get_db
+from ..main import app
 
 # Database stored in memory, to not impact current db
 DATABASE_URL = "sqlite://"
@@ -177,16 +178,52 @@ def test_create_book_empty_title():
     # create book with empty title
     response = client.post(
         "/books/new",
-        json={"title": "", "author": "Test Author"},
+        json={"title": "", "author": "Test Author", "genre": "Test Genre"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_book_empty_author():
+    # create book with empty title
+    response = client.post(
+        "/books/new",
+        json={"title": "Test Book", "author": "", "genre": "Test Genre"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_book_empty_genre():
+    # create book with empty genre
+    response = client.post(
+        "/books/new",
+        json={"title": "Test Book", "author": "Test Author", "genre": ""},
         headers={"Authorization": f"Bearer {test_token}"}
     )
     assert response.status_code == 422, response.text
 
 def test_create_book_no_title():
-    # create book with empty title
+    # create book with no title in payload
     response = client.post(
         "/books/new",
-        json={"author": "Test Author"},
+        json={"author": "Test Author", "genre": "Test Genre"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_book_no_author():
+    # create book with no author in payload
+    response = client.post(
+        "/books/new",
+        json={"title": "Test Book", "genre": "Test Genre"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_book_no_genre():
+    # create book with no genre in payload
+    response = client.post(
+        "/books/new",
+        json={"title": "Test Book", "author": "Test Author"},
         headers={"Authorization": f"Bearer {test_token}"}
     )
     assert response.status_code == 422, response.text
@@ -195,7 +232,7 @@ def test_create_book_long_title():
     # create book with title > 96 chars
     response = client.post(
         "/books/new",
-        json={"title": "testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1", "author": "Test Author"},
+        json={"title": "testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1testbook1", "author": "Test Author", "genre": "Test Genre"},
         headers={"Authorization": f"Bearer {test_token}"}
     )
     assert response.status_code == 422, response.text
@@ -209,11 +246,38 @@ def test_create_book_long_author():
     )
     assert response.status_code == 422, response.text
 
+def test_create_book_long_genre():
+    # create book with genre > 50 chars
+    response = client.post(
+        "/books/new",
+        json={"title": "Test Book 1", "author": "Test Author", "genre": "Test GenreTest GenreTest GenreTest GenreTest GenreTest GenreTest GenreTest GenreTest GenreTest GenreTest GenreTest GenreTest Genre"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
 def test_create_book_special_chars_title():
     # create book with special chars in title
     response = client.post(
         "/books/new",
-        json={"title": "Test&Book 1", "author": "Test Author"},
+        json={"title": "Test&Book 1", "author": "Test Author", "genre": "Test Genre"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_book_special_chars_author():
+    # create book with special chars in author
+    response = client.post(
+        "/books/new",
+        json={"title": "Test&Book 1", "author": "Test&Author", "genre": "Test Genre"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_book_special_chars_genre():
+    # create book with special chars in genre
+    response = client.post(
+        "/books/new",
+        json={"title": "Test Book", "author": "Test Author", "genre": "Test&Genre"},
         headers={"Authorization": f"Bearer {test_token}"}
     )
     assert response.status_code == 422, response.text
@@ -222,7 +286,7 @@ def test_update_book():
     # create book with special chars in author
     response = client.post(
         "/books/update",
-        json={"id": "1","title": "Test Book Updated", "author": "Test Author Updated"},
+        json={"id": "1","title": "Test Book Updated", "author": "Test Author Updated", "genre": "Test Genre"},
         headers={"Authorization": f"Bearer {test_token}"}
     )
     assert response.status_code == 200
@@ -271,7 +335,25 @@ def test_update_book_special_chars_title():
     # update book with special chars in title
     response = client.post(
         "/books/update",
-        json={"id":"1", "title": "Test&Book 1", "author": "Test Author"},
+        json={"id":"1", "title": "Test&Book 1", "author": "Test Author", "genre": "Test Genre"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_update_book_special_chars_author():
+    # update book with special chars in title
+    response = client.post(
+        "/books/update",
+        json={"id":"1", "title": "Test Book 1", "author": "Test&Author", "genre": "Test Genre"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_update_book_special_chars_genre():
+    # update book with special chars in title
+    response = client.post(
+        "/books/update",
+        json={"id":"1", "title": "Test Book 1", "author": "Test Author", "genre": "Test&Genre"},
         headers={"Authorization": f"Bearer {test_token}"}
     )
     assert response.status_code == 422, response.text
@@ -285,6 +367,9 @@ def test_create_new_lender():
     created_lender = response.json()
     assert created_lender["lender_name"] == lender_data["lender_name"]
 
+# TO DO:
+## CREATE LENDER VALIDATION (LENDER NAME)
+## UPDATE LENDER VALIDATION (LENDER NAME)
 
 if __name__ == '__main__':
     unittest.main()
