@@ -2,6 +2,9 @@ from fastapi import HTTPException
 
 
 class ErrorMessages:
+    UNKNOWN_ERROR_OCCURRED = HTTPException(status_code=500, detail="An unknown error occurred, please try again later")
+    NOT_AUTHORIZED = HTTPException(status_code=401, detail="You are not authorized to make this request, please use a valid token")
+
     EMPTY_USERNAME = HTTPException(status_code=422, detail="Username is empty")
     EMPTY_PASSWORD = HTTPException(status_code=422, detail="Password is empty")
     MAXIMUM_USERNAME_LENGTH_EXCEEDED = HTTPException(status_code=422, detail="Username exceeds maximum length of 32 characters")
@@ -11,6 +14,7 @@ class ErrorMessages:
     USERNAME_SPACE = HTTPException(status_code=422, detail="Username cannot have spaces")
     PASSWORD_SPACE = HTTPException(status_code=422, detail="Password cannot have spaces")
     USERNAME_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Username cannot contain special characters")
+
 
 
     ALREADY_EXISTING_ADMIN = HTTPException(status_code=409, detail="Username is already in use") # 409 used for conflict

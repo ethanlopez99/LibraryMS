@@ -14,14 +14,14 @@ router = APIRouter(prefix="/books")
 @router.get("/")
 def get_all_books(db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
-        raise HTTPException(status_code=401, detail="Not Authorized")
+        raise ErrorMessages.NOT_AUTHORIZED
     books = crud.get_all_books(db)
     return books
 
 @router.get("/search/unavailable")
 def get_all_unavailable_books(title: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
-        raise HTTPException(status_code=401, detail="Not Authorized")
+        raise ErrorMessages.NOT_AUTHORIZED
     books = crud.get_all_unavailable_books_by_name(db = db, title = title, limit = limit, skip = skip)
     return books
 
@@ -29,7 +29,7 @@ def get_all_unavailable_books(title: str, skip: int = 0, limit: int = 10, db: Se
 @router.get("/removeall")
 def remove_all_books(db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
-        raise HTTPException(status_code=401, detail="Not Authorized")
+        raise ErrorMessages.NOT_AUTHORIZED
     crud.delete_books(db=db)
     return {"message": "All books deleted"}
 
@@ -37,7 +37,7 @@ def remove_all_books(db: Session = Depends(get_db), token: dict = Depends(securi
 @router.get("/search")
 def search_by_name(title: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
-        raise HTTPException(status_code=401, detail="Not Authorized")
+        raise ErrorMessages.NOT_AUTHORIZED
     books = crud.search_books_by_name(db, title, skip=skip, limit=limit)
     return books
 
@@ -63,7 +63,7 @@ def get_popular_books(db: Session = Depends(get_db), limit: int = 10):
 @router.post("/new")
 def create_new_book(book_data: BookCreate, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
-        raise HTTPException(status_code=401, detail="Not Authorized")
+        raise ErrorMessages.NOT_AUTHORIZED
     
     try:
         validate_title(book_data.title)
@@ -77,13 +77,13 @@ def create_new_book(book_data: BookCreate, db: Session = Depends(get_db), token:
     if book:
         return book
     else:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to add new book")
+        raise ErrorMessages.UNKNOWN_ERROR_OCCURRED
 
-# Update a book in the database
+# Update a book in the database. As it's already existing book, BookCreate cannot be used
 @router.post("/update")
 def update_book(new_book_data: dict, db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
     if "sub" not in token:
-        raise HTTPException(status_code=401, detail="Not Authorized")
+        raise ErrorMessages.NOT_AUTHORIZED
     
     if "id" not in new_book_data:
         raise ErrorMessages.BOOK_ID_MISSING
@@ -92,21 +92,21 @@ def update_book(new_book_data: dict, db: Session = Depends(get_db), token: dict 
         validate_title(new_book_data['title'])
     except HTTPException as e:
         raise e
-    except KeyError as e:
+    except KeyError:
         raise ErrorMessages.TITLE_MISSING
     
     try:
         validate_author(new_book_data['author'])
     except HTTPException as e:
         raise e
-    except KeyError as e:
+    except KeyError:
         raise ErrorMessages.AUTHOR_MISSING
 
     try:
         validate_genre(new_book_data['genre'])
     except HTTPException as e:
         raise e
-    except KeyError as e:
+    except KeyError:
         raise ErrorMessages.GENRE_MISSING
     
     new_book_data = {"id": new_book_data['id'], "title":new_book_data['title'], "author":new_book_data['author']}
@@ -115,4 +115,4 @@ def update_book(new_book_data: dict, db: Session = Depends(get_db), token: dict 
     if db_book:
         return db_book
     else:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update book")
+        raise ErrorMessages.UNKNOWN_ERROR_OCCURRED
