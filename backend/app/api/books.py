@@ -117,7 +117,11 @@ def update_book(new_book_data: dict, db: Session = Depends(get_db), token: dict 
     
     new_book_data = {"id": new_book_data['id'], "title":new_book_data['title'], "author":new_book_data['author'], "genre":new_book_data['genre']}
     
-    db_book = crud.update_book(update_data=new_book_data, db=db)
+    try:
+        db_book = crud.update_book(update_data=new_book_data, db=db)
+    except HTTPException as e:
+        raise e
+    
     if db_book:
         return db_book
     else:
