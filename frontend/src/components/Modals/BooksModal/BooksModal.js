@@ -4,28 +4,37 @@ import axios from "axios";
 import "./BooksModal.css";
 import Entry from "../../Entry/Entry";
 
+import Pagination from "@mui/material/Pagination";
 import { IoCloseOutline } from "react-icons/io5";
 
 // BooksModal defined, with parameters for transactions modal (to reuse code)
-const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userToken, unavailable = false }) => {
+const BooksModal = ({
+  setBooksModalShow,
+  setTransactionsModalShow = false,
+  userToken,
+  unavailable = false,
+  count,
+}) => {
   // Create books, setBooks, message and setMessage for future use
   const [books, setBooks] = useState();
+  const [page, setPage] = useState(1);
   const [message, setMessage] = useState();
 
   // On load, get all books (backend will limit to 10)
   useEffect(() => {
-    getBooks({ target: { value: "" } });
+    getBooks({ target: { value: "" }, skip: page * 10 - 10 });
   }, []);
 
   // get all books from API. Using "event" as input here, to match "input" component's syntax
-  const getBooks = async (event) => {
-    // if unavailable has been declared, find unavailable books, otherwise find all books from API 
-    const url = unavailable ? (`http://127.0.0.1:8000/books/search/unavailable?title=%${event.target.value}%`) : (`http://127.0.0.1:8000/books/search?title=%${event.target.value}%`)
+  const getBooks = async ({ target, skip }) => {
+    // if unavailable has been declared, find unavailable books, otherwise find all books from API
+    const url = unavailable
+      ? `http://127.0.0.1:8000/books/search/unavailable?title=%${target.value}%&skip=${skip}`
+      : `http://127.0.0.1:8000/books/search?title=%${target.value}%&skip=${skip}`;
     try {
-      const response = await axios.get(
-      url,        
-      { headers: { Authorization: `Bearer ${userToken}` } }
-      );
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
 
       // save API response data to books
       const books = response.data;
@@ -33,9 +42,9 @@ const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userT
       setBooks(books);
     } catch (error) {
       // log error to console for further debugging by user if needed
-      console.log(error)
+      console.log(error);
       // If error retrieving books, let user know
-      setMessage({message: "Error retrieving books, please try again", color:"red"})
+      setMessage({ message: error.response.data.detail, color: "red" });
     }
   };
 
@@ -53,10 +62,18 @@ const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userT
       }
     } catch (error) {
       // log error to console for further debugging by user if needed
-      console.log(error)
-      // If error updating book, let user know 
-      setMessage({message: "Error updating book, please try again", color:"red"})
-    }    
+      console.log(error);
+      // If error updating book, let user know
+      setMessage({
+        message: error.response.data.detail,
+        color: "red",
+      });
+    }
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+    getBooks({ target: { value: "" }, skip: value * 10 - 10 });
   };
 
   return (
@@ -65,7 +82,11 @@ const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userT
         <div className="app_modal-close">
           <IoCloseOutline
             size={50}
-            onClick={() => unavailable ? setTransactionsModalShow(false) : setBooksModalShow(false)}
+            onClick={() =>
+              unavailable
+                ? setTransactionsModalShow(false)
+                : setBooksModalShow(false)
+            }
             color="grey"
           />
         </div>
@@ -80,13 +101,22 @@ const BooksModal = ({ setBooksModalShow, setTransactionsModalShow = false, userT
           {books &&
             books.map((book) => (
               <>
-                <Entry book={book} handleUpdate={handleUpdate} setErrorMessage={setMessage} editable={!unavailable}/>
+                <Entry
+                  book={book}
+                  handleUpdate={handleUpdate}
+                  setErrorMessage={setMessage}
+                  editable={!unavailable}
+                />
                 <div style={{ height: "2px", background: "lightgrey" }} />
               </>
             ))}
+          <Pagination
+            count={Math.ceil(count / 10)}
+            onChange={handlePageChange}
+          />
         </div>
         {/* show error message if any */}
-        {message && <h3 style={{color: message.color}}>{message.message}</h3>}
+        {message && <h3 style={{ color: message.color }}>{message.message}</h3>}
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import "./HomeScreen.css";
 import { PiBooksFill, PiArrowCircleUpBold } from "react-icons/pi";
 import { FaUserFriends, FaUserShield, FaChartBar } from "react-icons/fa";
 
-// Import all modals 
+// Import all modals
 import LoanBookModal from "../../components/Modals/LoanBookModal/LoanBookModal";
 import ReturnBookModal from "../../components/Modals/ReturnBookModal/ReturnBookModal";
 import BooksModal from "../../components/Modals/BooksModal/BooksModal";
@@ -56,7 +56,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
     );
     setNumberOfLoans(response.data);
   };
-  
+
   // Get number of lenders from the database
   const getNumberOfLenders = async () => {
     const response = await axios.get("http://127.0.0.1:8000/lenders/count/all");
@@ -83,7 +83,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
       title: "Current Loans",
       value: numberOfLoans,
       color: "blue",
-      Modal: setTransactionsModalShow
+      Modal: setTransactionsModalShow,
     },
     {
       Icon: FaUserFriends,
@@ -91,7 +91,6 @@ const HomeScreen = ({ userToken, setUserToken }) => {
       value: numberOfLenders,
       color: "orange",
       Modal: setLendersModalShow,
-
     },
     {
       Icon: FaUserShield,
@@ -186,6 +185,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <BooksModal
           userToken={userToken}
           setBooksModalShow={setBooksModalShow}
+          count={numberOfBooks}
         />
       )}
       {lendersModalShow && (
@@ -198,6 +198,7 @@ const HomeScreen = ({ userToken, setUserToken }) => {
         <TransactionsModal
           userToken={userToken}
           setTransactionsModalShow={setTransactionsModalShow}
+          numberOfLoans={numberOfLoans}
         />
       )}
       {popularBooksModalShow && (
