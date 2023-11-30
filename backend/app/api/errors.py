@@ -37,3 +37,9 @@ class ErrorMessages:
     GENRE_MISSING = HTTPException(status_code=422, detail="Genre is missing from request")
     BOOK_ID_MISSING = HTTPException(status_code=422, detail="ID is missing from request")
 
+
+    EMPTY_LENDER_NAME = HTTPException(status_code=422, detail="Lender name is empty")
+    MAXIMUM_LENDER_NAME_LENGTH_EXCEEDED = HTTPException(status_code=422, detail="Lender name exceeds maximum length of 32 characters")
+    MINIMUM_LENDER_NAME_LENGTH_SUBCEEDED = HTTPException(status_code=422, detail="Lender name does not meen minimum length of 5 characters")
+    LENDER_NAME_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Lender name cannot contain special characters")
+    LENDER_NAME_MISSING = HTTPException(status_code=422, detail="Lender name is missing from request")

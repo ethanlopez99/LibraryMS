@@ -60,3 +60,16 @@ def validate_genre(genre):
 
     if disallowed_chars.search(genre):
         raise ErrorMessages.GENRE_SPECIAL_CHARACTERS
+
+def validate_lender_name(lender_name):
+    if lender_name.strip() == "":
+        raise ErrorMessages.EMPTY_LENDER_NAME
+    elif len(lender_name.strip()) > 50:
+        raise ErrorMessages.MAXIMUM_LENDER_NAME_LENGTH_EXCEEDED
+    elif len(lender_name.strip()) < 5:
+        raise ErrorMessages.MINIMUM_LENDER_NAME_LENGTH_SUBCEEDED
+    
+    disallowed_chars = re.compile(r'[\'"<>!@#$%^&*()+=\[\]{}/\\;:,.`]')
+
+    if disallowed_chars.search(lender_name):
+        raise ErrorMessages.LENDER_NAME_SPECIAL_CHARACTERS
