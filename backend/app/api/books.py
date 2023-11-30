@@ -47,6 +47,12 @@ def count_books(db: Session = Depends(get_db)):
     count = crud.count_books(db)
     return count
 
+# Count all books in the database by name
+@router.get("/count")
+def count_book_by_name(title: str, db: Session = Depends(get_db)):
+    count = crud.count_books_by_name(db=db, title=title)
+    return count
+
 # Count all unavailable books in the database
 @router.get("/count/unavailable")
 def count_unavailable_books(db: Session = Depends(get_db)):
