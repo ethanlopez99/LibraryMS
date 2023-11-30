@@ -43,3 +43,4 @@ class ErrorMessages:
     MINIMUM_LENDER_NAME_LENGTH_SUBCEEDED = HTTPException(status_code=422, detail="Lender name does not meen minimum length of 5 characters")
     LENDER_NAME_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Lender name cannot contain special characters")
     LENDER_NAME_MISSING = HTTPException(status_code=422, detail="Lender name is missing from request")
+    LENDER_ID_MISSING = HTTPException(status_code=422, detail="Lender ID is missing from request")
