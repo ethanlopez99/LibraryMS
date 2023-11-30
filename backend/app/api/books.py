@@ -12,10 +12,10 @@ router = APIRouter(prefix="/books")
 
 # Get all books from the database
 @router.get("/")
-def get_all_books(db: Session = Depends(get_db), token: dict = Depends(security.verify_token)):
+def get_all_books(db: Session = Depends(get_db), token: dict = Depends(security.verify_token), skip: int = 0):
     if "sub" not in token:
         raise ErrorMessages.NOT_AUTHORIZED
-    books = crud.get_all_books(db)
+    books = crud.get_all_books(db=db, skip=skip)
     return books
 
 @router.get("/search/unavailable")
