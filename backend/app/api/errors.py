@@ -1,4 +1,5 @@
-from fastapi import  HTTPException
+from fastapi import HTTPException
+
 
 class ErrorMessages:
     EMPTY_USERNAME = HTTPException(status_code=422, detail="Username is empty")
@@ -20,11 +21,15 @@ class ErrorMessages:
 
     EMPTY_TITLE = HTTPException(status_code=422, detail="Title is empty")
     EMPTY_AUTHOR = HTTPException(status_code=422, detail="Author is empty")
+    EMPTY_GENRE = HTTPException(status_code=422, detail="Genre is empty")
     MAXIMUM_TITLE_LENGTH_EXCEEDED = HTTPException(status_code=422, detail="Title exceeds maximum length of 96 characters")
     MAXIMUM_AUTHOR_LENGTH_EXCEEDED = HTTPException(status_code=422, detail="Author exceeds maximum length of 50 characters")
+    MAXIMUM_GENRE_LENGTH_EXCEEDED = HTTPException(status_code=422, detail="Author exceeds maximum length of 50 characters")
     TITLE_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Title cannot contain special characters")
     AUTHOR_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Author cannot contain special characters")
+    GENRE_SPECIAL_CHARACTERS = HTTPException(status_code=422, detail="Genre cannot contain special characters")
     TITLE_MISSING = HTTPException(status_code=422, detail="Title is missing from request")
     AUTHOR_MISSING = HTTPException(status_code=422, detail="Author is missing from request")
+    GENRE_MISSING = HTTPException(status_code=422, detail="Genre is missing from request")
     BOOK_ID_MISSING = HTTPException(status_code=422, detail="ID is missing from request")
 

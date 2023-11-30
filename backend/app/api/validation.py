@@ -1,5 +1,7 @@
 import re
+
 from .errors import ErrorMessages
+
 
 def validate_username(username):
     if username == "":
@@ -47,3 +49,14 @@ def validate_author(author):
 
     if disallowed_chars.search(author):
         raise ErrorMessages.AUTHOR_SPECIAL_CHARACTERS
+    
+def validate_genre(genre):
+    if genre.strip() == "":
+        raise ErrorMessages.EMPTY_GENRE
+    elif len(genre.strip()) > 50:
+        raise ErrorMessages.MAXIMUM_GENRE_LENGTH_EXCEEDED
+
+    disallowed_chars = re.compile(r'[\'"<>@#$%^&*+=\[\]{}/\\;`]')
+
+    if disallowed_chars.search(genre):
+        raise ErrorMessages.GENRE_SPECIAL_CHARACTERS

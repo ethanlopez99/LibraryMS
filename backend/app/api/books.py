@@ -1,11 +1,12 @@
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
+
 from . import crud, security
 from .database import get_db
-from .models import Book, BookCreate, Token
-from .validation import validate_title, validate_author
 from .errors import ErrorMessages
+from .models import Book, BookCreate, Token
+from .validation import validate_author, validate_genre, validate_title
 
 router = APIRouter(prefix="/books")
 
@@ -67,10 +68,11 @@ def create_new_book(book_data: BookCreate, db: Session = Depends(get_db), token:
     try:
         validate_title(book_data.title)
         validate_author(book_data.author)
+        validate_genre(book_data.genre)
     except HTTPException as e:
         raise e
 
-    new_book_data = {'title': book_data.title, 'author': book_data.author}
+    new_book_data = {'title': book_data.title, 'author': book_data.author, 'genre': book_data.genre}
     book = crud.new_book(db=db, book_data=new_book_data)
     if book:
         return book
@@ -98,7 +100,14 @@ def update_book(new_book_data: dict, db: Session = Depends(get_db), token: dict 
     except HTTPException as e:
         raise e
     except KeyError as e:
-        raise ErrorMessages.TITLE_MISSING
+        raise ErrorMessages.AUTHOR_MISSING
+
+    try:
+        validate_genre(new_book_data['genre'])
+    except HTTPException as e:
+        raise e
+    except KeyError as e:
+        raise ErrorMessages.GENRE_MISSING
     
     new_book_data = {"id": new_book_data['id'], "title":new_book_data['title'], "author":new_book_data['author']}
     
