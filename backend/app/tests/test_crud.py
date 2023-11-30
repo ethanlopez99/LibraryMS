@@ -367,7 +367,89 @@ def test_create_new_lender():
     created_lender = response.json()
     assert created_lender["lender_name"] == lender_data["lender_name"]
 
-# TO DO:
+def test_create_lender_empty_lender_name():
+    # create lender with empty lender name
+    response = client.post(
+        "/lenders/new",
+        json={"lender_name": ""},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_lender_long_lender_name():
+    # create lender with long lender name > 50
+    response = client.post(
+        "/lenders/new",
+        json={"lender_name": "TestLenderTestLenderTestLenderTestLenderTestLenderTestLenderTestLender"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_lender_short_lender_name():
+    # create lender with long lender name < 5
+    response = client.post(
+        "/lenders/new",
+        json={"lender_name": "Test"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_create_lender_special_chars_lender_name():
+    # create lender with long lender name < 5
+    response = client.post(
+        "/lenders/new",
+        json={"lender_name": "Test&Lender^"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_update_lender():
+    # Test updating a lender
+    lender_data = {"id": "1", "lender_name": "Test Lender 2"}
+    response = client.post("/lenders/update", json=lender_data, headers={"Authorization": f"Bearer {test_token}"})
+    print(response.json())
+    assert response.status_code == 200
+    created_lender = response.json()
+    assert created_lender["lender_name"] == lender_data["lender_name"]
+
+
+def test_update_lender_empty_lender_name():
+    # update lender with empty lender name
+    response = client.post(
+        "/lenders/update",
+        json={"id":"1", "lender_name": ""},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_update_lender_long_lender_name():
+    # update lender with long lender name > 50
+    response = client.post(
+        "/lenders/update",
+        json={"id":"1", "lender_name": "TestLenderTestLenderTestLenderTestLenderTestLenderTestLenderTestLender"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_update_lender_short_lender_name():
+    # update lender with long lender name < 5
+    response = client.post(
+        "/lenders/update",
+        json={"id":"1", "lender_name": "Test"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+def test_update_lender_special_chars_lender_name():
+    # update lender with long lender name < 5
+    response = client.post(
+        "/lenders/update",
+        json={"id":"1", "lender_name": "Test&Lender^"},
+        headers={"Authorization": f"Bearer {test_token}"}
+    )
+    assert response.status_code == 422, response.text
+
+
 ## CREATE LENDER VALIDATION (LENDER NAME)
 ## UPDATE LENDER VALIDATION (LENDER NAME)
 
