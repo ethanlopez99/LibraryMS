@@ -14,25 +14,30 @@ const Entry = ({
   const [editMode, setEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState();
   const [editedAuthor, setEditedAuthor] = useState();
+  const [editedGenre, setEditedGenre] = useState();
   const [editedLenderName, setEditedLenderName] = useState();
 
-  useEffect(() => {
+  // ensure latest info is used when going into edit mode
+  const handleEditClick = () => {
+    setEditMode(true);
     if (book) {
       setEditedTitle(book.title);
       setEditedAuthor(book.author);
+      setEditedGenre(book.genre);
     } else if (lender) {
       setEditedLenderName(lender.lender_name);
     }
-  }, []);
-
-  const handleEditClick = () => {
-    setEditMode(true);
   };
 
   const handleSaveClick = () => {
     // Call the handleUpdate function with the updated data
     if (book) {
-      handleUpdate({ ...book, author: editedAuthor, title: editedTitle });
+      handleUpdate({
+        ...book,
+        author: editedAuthor,
+        title: editedTitle,
+        genre: editedGenre,
+      });
     } else if (lender) {
       handleUpdate({ ...lender, lender_name: editedLenderName });
     }
@@ -44,6 +49,7 @@ const Entry = ({
     if (book) {
       setEditedTitle(book.title);
       setEditedAuthor(book.author);
+      setEditedGenre(book.genre);
     } else if (lender) {
       setEditedLenderName(lender.lender_name);
     }
@@ -64,12 +70,18 @@ const Entry = ({
               value={editedAuthor}
               onChange={(e) => setEditedAuthor(e.target.value)}
             />
+            <input
+              type="text"
+              value={editedGenre}
+              onChange={(e) => setEditedGenre(e.target.value)}
+            />
             <button onClick={handleSaveClick}>Save</button>
           </>
         ) : (
           <>
             <p style={{ textAlign: "left", flex: 1.5 }}>{book.title}</p>
             <p style={{ textAlign: "left", flex: 0.8 }}>{book.author}</p>
+            <p style={{ textAlign: "left", flex: 0.8 }}>{book.genre}</p>
             {count && <p style={{ textAlign: "left", flex: 0.3 }}>{count}</p>}
 
             <div
