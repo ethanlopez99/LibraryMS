@@ -450,8 +450,5 @@ def test_update_lender_special_chars_lender_name():
     assert response.status_code == 422, response.text
 
 
-## CREATE LENDER VALIDATION (LENDER NAME)
-## UPDATE LENDER VALIDATION (LENDER NAME)
-
 if __name__ == '__main__':
     unittest.main()
